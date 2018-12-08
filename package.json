@@ -1,0 +1,28 @@
+{
+  "name": "jasmine-ajax-node",
+  "version": "1.0.0-alpha.1",
+  "description": "Request mocking for Node.js using the same API as jasmine-ajax.",
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/roddolf/jasmine-ajax-node.git"
+  },
+  "keywords": [
+    "node",
+    "nodejs",
+    "jasmine",
+    "jasmine-ajax",
+    "http",
+    "request",
+    "mocking"
+  ],
+  "author": "Rodolfo Aguirre <aguirreg.rodolfo@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/roddolf/jasmine-ajax-node/issues"
+  },
+  "homepage": "https://github.com/roddolf/jasmine-ajax-node#readme"
+}
