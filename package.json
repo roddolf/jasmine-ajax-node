@@ -24,5 +24,16 @@
   "bugs": {
     "url": "https://github.com/roddolf/jasmine-ajax-node/issues"
   },
-  "homepage": "https://github.com/roddolf/jasmine-ajax-node#readme"
+  "homepage": "https://github.com/roddolf/jasmine-ajax-node#readme",
+  "devDependencies": {
+    "@types/jasmine": "^3.3.9",
+    "@types/node": "^11.9.4",
+    "typescript": "^3.3.3"
+  },
+  "dependencies": {
+    "tslib": "^1.9.3"
+  },
+  "peerDependencies": {
+    "jasmine": ">=2"
+  }
 }
