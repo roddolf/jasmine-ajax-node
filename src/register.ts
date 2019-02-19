@@ -6,6 +6,6 @@ if (!("jasmine" in global))
 const jasmineObj: { Ajax?: any } = global["jasmine"];
 if (!("Ajax" in jasmineObj)) jasmineObj.Ajax = new MockAjax();
 
-declare namespace jasmine {
+export declare namespace jasmine {
     const Ajax: MockAjax;
 }

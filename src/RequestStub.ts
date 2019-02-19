@@ -1,19 +1,21 @@
 import { RequestStubReturnOptions } from './RequestStubReturnOptions';
+import { Response } from './Response';
 
 
-export class RequestStub {
+export class RequestStub implements Response {
     data: string | RegExp;
     method: string;
 
-    private url: string | RegExp;
-    private query: string | undefined;
-    private status?: number;
-    private response?: string;
-    private contentType?: string;
-    private responseText?: string;
-    private responseHeaders?: {
+    status?: number;
+    response?: string;
+    contentType?: string;
+    responseText?: string;
+    responseHeaders?: {
         [p: string]: string;
     };
+
+    private url: string | RegExp;
+    private query: string | undefined;
 
     constructor(url: string | RegExp, stubData: string | RegExp, method: string) {
         if (url instanceof RegExp) {

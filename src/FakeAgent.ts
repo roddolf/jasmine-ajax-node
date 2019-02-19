@@ -1,16 +1,16 @@
-import { Agent, AgentOptions } from 'http';
+import http from 'http';
 
 /**
  * Mock agent class to avoid request been sent.
  */
-export class FakeAgent implements Agent {
-    options: AgentOptions;
+export class FakeAgent implements http.Agent {
+    options: http.AgentOptions;
     sockets: any;
     requests: any;
     maxSockets: number;
     maxFreeSockets: number;
 
-    constructor(options: AgentOptions = {}) {
+    constructor(options: http.AgentOptions = {}) {
         this.options = options;
 
         this.maxSockets = Infinity;

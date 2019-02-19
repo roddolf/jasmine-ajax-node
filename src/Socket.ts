@@ -1,4 +1,4 @@
-import { EventEmitter } from 'events';
+import events from 'events';
 
 
 export interface SocketOptions {
@@ -6,7 +6,7 @@ export interface SocketOptions {
 }
 
 
-export class Socket extends EventEmitter {
+export class Socket extends events.EventEmitter {
     authorized?: boolean;
     writable: boolean;
     readable: boolean;
