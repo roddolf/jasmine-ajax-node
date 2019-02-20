@@ -5,12 +5,3 @@ if (!("jasmine" in global))
 
 const jasmineObj: { Ajax?: any } = global["jasmine"];
 if (!("Ajax" in jasmineObj)) jasmineObj.Ajax = new MockAjax();
-
-/**
- * Extends the `jasmine` namespace to include the custom mock Ajax.
- * 
- * @public
- */
-export declare namespace jasmine {
-    const Ajax: MockAjax;
-}
