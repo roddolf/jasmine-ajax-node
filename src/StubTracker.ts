@@ -1,6 +1,10 @@
 import { RequestStub } from './RequestStub';
 
-
+/**
+ * Tracker of all the mock responses set.
+ * 
+ * @public
+ */
 export class StubTracker {
     private stubs: RequestStub[];
 

@@ -1,3 +1,8 @@
+/**
+ * The data to be used as the mock response of a fake request.
+ * 
+ * @public
+ */
 export interface Response {
     status?: number;
     statusText?: string;

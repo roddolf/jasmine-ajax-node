@@ -1,11 +1,15 @@
 import events from 'events';
 
-
+/**
+ * @internal
+ */
 export interface SocketOptions {
     proto?: string;
 }
 
-
+/**
+ * @internal
+ */
 export class Socket extends events.EventEmitter {
     authorized?: boolean;
     writable: boolean;

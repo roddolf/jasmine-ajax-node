@@ -2,6 +2,8 @@ import http from 'http';
 
 /**
  * Mock agent class to avoid request been sent.
+ * 
+ * @public
  */
 export class FakeAgent implements http.Agent {
     options: http.AgentOptions;

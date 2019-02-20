@@ -1,12 +1,17 @@
 import http from "http";
 import https from "https";
 import url from "url";
-import { RequestStub } from './RequestStub';
 import { FakeRequest } from './FakeRequest';
-import { StubTracker } from './StubTracker';
+import { RequestStub } from './RequestStub';
 import { RequestTracker } from './RequestTracker';
+import { StubTracker } from './StubTracker';
 
-
+/**
+ * Main class the manages the fake requests and the mock
+ * responses that can be retrieved in a matching request.
+ * 
+ * @public
+ */
 export class MockAjax {
     readonly stubs: StubTracker;
     readonly requests: RequestTracker;
@@ -56,9 +61,9 @@ export class MockAjax {
         if (this.requestOverride![protocol]) throw new Error(`Mock request already installed over "${protocol}"`);
 
         const module: typeof http | typeof https = { http, https }[protocol];
-        
+
         this.requestOverride![protocol] = { module, request: module.request };
-        
+
         module.request = this._mockRequest;
     }
 

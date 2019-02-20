@@ -1,7 +1,12 @@
 import { RequestStubReturnOptions } from './RequestStubReturnOptions';
 import { Response } from './Response';
 
-
+/**
+ * Class that represents a mock response when a certain
+ * request is made.
+ * 
+ * @public
+ */
 export class RequestStub implements Response {
     data: string | RegExp;
     method: string;

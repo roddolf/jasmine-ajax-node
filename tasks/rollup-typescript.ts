@@ -9,7 +9,7 @@ export const compile = async () => {
         input: path.resolve(config.src.path, config.src.mainFile),
         external: [
             // Node.js
-            "http", "https", "url", "timers", "net",
+            "http", "https", "url", "timers", "net", "events",
             // Typescript Helpers
             "tslib"
         ],

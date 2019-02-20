@@ -1,13 +1,17 @@
 import http from "http";
+import net from 'net';
 import timers from "timers";
 import url from "url";
 import { FakeAgent } from './FakeAgent';
-import { Response } from './Response';
-import { RequestStub } from './RequestStub';
 import { MockAjax } from "./MockAjax";
-import net from 'net';
+import { RequestStub } from './RequestStub';
+import { Response } from './Response';
 
-
+/**
+ * Fake {@link http.ClientRequest} to be used instead a request call.
+ * 
+ * @public
+ */
 export class FakeRequest extends http.ClientRequest {
     url: string;
     method: string | undefined;

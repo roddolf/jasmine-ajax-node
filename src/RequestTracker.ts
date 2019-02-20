@@ -1,6 +1,10 @@
 import { FakeRequest } from './FakeRequest';
 
-
+/**
+ * Tracker of all the requests made in the installed session.
+ * 
+ * @public
+ */
 export class RequestTracker {
     private requests: FakeRequest[];
 
