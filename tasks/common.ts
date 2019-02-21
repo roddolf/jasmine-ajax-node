@@ -14,6 +14,11 @@ export const config = {
     },
     temp: {
         path: "temp/",
+        files: "temp/**/*.js",
         mainDTS: "index.d.ts",
-    }
+    },
+    test: {
+        path: "src/",
+        files: "src/**/*.spec.ts",
+    },
 };

@@ -6,7 +6,7 @@
   "typings": "dist/jasmine-ajax-node.d.ts",
   "scripts": {
     "start": "gulp build",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "gulp test"
   },
   "repository": {
     "type": "git",
@@ -31,16 +31,25 @@
     "@microsoft/api-extractor": "^6.3.0",
     "@types/del": "^3.0.1",
     "@types/gulp": "^4.0.5",
+    "@types/gulp-filter": "^3.0.33",
+    "@types/gulp-jasmine": "^2.4.2",
+    "@types/gulp-sourcemaps": "0.0.32",
+    "@types/jasmine": "^3.3.9",
     "@types/node": "^11.9.4",
     "del": "^3.0.0",
     "gulp": "^4.0.0",
+    "gulp-filter": "^5.1.0",
+    "gulp-jasmine": "^4.0.0",
     "gulp-sourcemaps": "^2.6.4",
+    "gulp-typescript": "^5.0.0",
+    "jasmine-core": "^3.3.0",
     "rollup": "^1.2.1",
     "rollup-plugin-typescript2": "^0.19.2",
     "ts-node": "^8.0.2",
     "typescript": "^3.3.3"
   },
   "dependencies": {
+    "jasmine-spec-reporter": "^4.2.1",
     "tslib": "^1.9.3"
   },
   "peerDependencies": {
