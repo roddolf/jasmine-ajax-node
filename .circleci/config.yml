@@ -1,0 +1,48 @@
+common: &common
+  docker:
+    - image: circleci/node:7.10
+  working_directory: ~/workspace
+
+add_npm_token: &add_npm_token echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+
+version: 2
+jobs:
+  build:
+    <<: *common
+
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+
+      - run: npm install
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+
+      - run: npm start
+
+      # Persist the specified paths into the workspace.
+      - persist_to_workspace:
+          root: ~/
+          # Must be relative path from root
+          paths:
+            - workspace
+
+workflows:
+  version: 2
+  build_and_publish:
+    jobs:
+      - build:
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              only: /.*/

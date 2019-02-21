@@ -5,6 +5,7 @@
   "main": "dist/jasmine-ajax-node.js",
   "typings": "dist/jasmine-ajax-node.d.ts",
   "scripts": {
+    "start": "gulp build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -30,7 +31,6 @@
     "@microsoft/api-extractor": "^6.3.0",
     "@types/del": "^3.0.1",
     "@types/gulp": "^4.0.5",
-    "@types/jasmine": "^3.3.9",
     "@types/node": "^11.9.4",
     "del": "^3.0.0",
     "gulp": "^4.0.0",
