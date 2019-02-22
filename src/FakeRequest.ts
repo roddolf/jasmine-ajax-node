@@ -32,6 +32,9 @@ export class FakeRequest extends http.ClientRequest {
             ? optionsOrURL
             : url.parse(optionsOrURL);
 
+        if (!options.protocol && FakeAgent.is(options.agent))
+            options.protocol = options.agent.protocol;
+
         super({
             ...options,
             agent: new FakeAgent({ protocol: options.protocol }),

@@ -24,6 +24,12 @@ export class FakeAgent implements http.Agent {
 
     protocol: string | undefined;
 
+    static is(value: unknown): value is FakeAgent {
+        return typeof value === "object"
+            && value !== null
+            && "addRequest" in value;
+    }
+
     constructor(options: FakeAgentOptions = {}) {
         this.protocol = options.protocol;
 
