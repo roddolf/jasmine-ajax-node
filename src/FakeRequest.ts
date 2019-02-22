@@ -34,7 +34,7 @@ export class FakeRequest extends http.ClientRequest {
 
         super({
             ...options,
-            agent: new FakeAgent(),
+            agent: new FakeAgent({ protocol: options.protocol }),
         });
 
         this.ajax = ajax;
@@ -127,7 +127,6 @@ export class FakeRequest extends http.ClientRequest {
         if (event === "socket") {
             if (!this.socket) {
                 this.socket = new net.Socket();
-                console.log("New socket");
             }
 
             listener.call(this, this.socket);

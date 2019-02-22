@@ -1,6 +1,16 @@
 import http from 'http';
 
 /**
+ * Extended options for a fake agent.
+ * 
+ * @public
+ */
+export interface FakeAgentOptions extends http.AgentOptions {
+    protocol?: string;
+}
+
+
+/**
  * Mock agent class to avoid request been sent.
  * 
  * @public
@@ -12,7 +22,11 @@ export class FakeAgent implements http.Agent {
     maxSockets: number;
     maxFreeSockets: number;
 
-    constructor(options: http.AgentOptions = {}) {
+    protocol: string | undefined;
+
+    constructor(options: FakeAgentOptions = {}) {
+        this.protocol = options.protocol;
+
         this.options = options;
 
         this.maxSockets = Infinity;
@@ -24,4 +38,8 @@ export class FakeAgent implements http.Agent {
         this.sockets = null;
         this.requests = null;
     }
+
+
+    // Methods Node.js require to be recognized as Agent like.
+    addRequest(): void { }
 }
