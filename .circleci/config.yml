@@ -3,6 +3,8 @@ common: &common
     - image: circleci/node:7.10
   working_directory: ~/workspace
 
+add_npm_token: &add_npm_token echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+
 version: 2
 jobs:
   build:
@@ -43,6 +45,28 @@ jobs:
 
       - run: npm run coverage
 
+  publish:
+    <<: *common
+
+    steps:
+      - attach_workspace:
+          at: ~/
+
+      - run: *add_npm_token
+
+      - run: npm publish
+
+  publish-next:
+    <<: *common
+
+    steps:
+      - attach_workspace:
+          at: ~/
+
+      - run: *add_npm_token
+
+      - run: npm publish --tag next
+
 workflows:
   version: 2
   build_and_publish:
@@ -61,3 +85,19 @@ workflows:
               only: /.*/
             branches:
               only: /.*/
+      - publish:
+          requires:
+            - test
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
+      - publish-next:
+          requires:
+            - test
+          filters:
+            tags:
+              only: /^v.*[a-zA-Z]+\.\d+$/
+            branches:
+              ignore: /.*/
