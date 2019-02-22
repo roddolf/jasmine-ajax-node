@@ -41,7 +41,7 @@ jobs:
       - attach_workspace:
           at: ~/
 
-      - run: npm run test
+      - run: npm run coverage
 
 workflows:
   version: 2

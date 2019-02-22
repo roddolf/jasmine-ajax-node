@@ -21,4 +21,12 @@ export const config = {
         path: "src/",
         files: "src/**/*.spec.ts",
     },
+    coverage: {
+        path: "coverage/",
+        reports: {
+            json: "coverage/coverage-final.json",
+            html: "coverage/html-report",
+            lcovonly: "coverage/lcov.info",
+        }
+    }
 };
