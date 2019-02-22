@@ -7,6 +7,8 @@ import typescript from "gulp-typescript";
 import { SpecReporter } from "jasmine-spec-reporter";
 import path from "path";
 import { config } from "./common";
+// @ts-ignore
+import codecov from "gulp-codecov";
 
 
 export const compileTemp = () => {
@@ -80,3 +82,9 @@ remapCoverage.displayName = "remapCoverage";
 
 export const coverage = series(compileTemp, coverageClean, coverageHook, coverageRun, remapCoverage);
 coverage.displayName = "coverage";
+
+
+export const sendCoverage = () =>
+    src(config.coverage.reports.lcovonly)
+        .pipe(codecov())
+    ;
