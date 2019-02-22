@@ -1,4 +1,4 @@
-export { FakeAgent } from "./FakeAgent";
+export { FakeAgent, FakeAgentOptions } from "./FakeAgent";
 export { FakeRequest } from "./FakeRequest";
 export { RequestStub } from "./RequestStub";
 export { RequestStubReturnOptions } from "./RequestStubReturnOptions";

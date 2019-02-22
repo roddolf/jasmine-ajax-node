@@ -54,8 +54,7 @@ export const coverageHook = () =>
 coverageHook.displayName = "coverageHook";
 
 export const coverageRun = () =>
-    // src(config.temp.files)
-    src(["temp/register.spec.js"])
+    src(config.temp.files)
         .pipe(jasmine({
             reporter: new SpecReporter({
                 summary: {

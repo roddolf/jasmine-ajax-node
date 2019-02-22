@@ -32,9 +32,12 @@ export class FakeRequest extends http.ClientRequest {
             ? optionsOrURL
             : url.parse(optionsOrURL);
 
+        if (!options.protocol && FakeAgent.is(options.agent))
+            options.protocol = options.agent.protocol;
+
         super({
             ...options,
-            agent: new FakeAgent(),
+            agent: new FakeAgent({ protocol: options.protocol }),
         });
 
         this.ajax = ajax;
@@ -74,7 +77,7 @@ export class FakeRequest extends http.ClientRequest {
     getHeaders(): FakeRequest["requestHeaders"] {
         const headers: FakeRequest["requestHeaders"] = {};
 
-        for (const name in this.getHeaderNames()) {
+        for (const name of this.getHeaderNames()) {
             const header = this.getHeader(name);
 
             if (typeof header === "undefined") continue;
@@ -127,7 +130,6 @@ export class FakeRequest extends http.ClientRequest {
         if (event === "socket") {
             if (!this.socket) {
                 this.socket = new net.Socket();
-                console.log("New socket");
             }
 
             listener.call(this, this.socket);
