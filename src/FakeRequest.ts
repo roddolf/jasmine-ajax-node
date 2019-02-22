@@ -74,7 +74,7 @@ export class FakeRequest extends http.ClientRequest {
     getHeaders(): FakeRequest["requestHeaders"] {
         const headers: FakeRequest["requestHeaders"] = {};
 
-        for (const name in this.getHeaderNames()) {
+        for (const name of this.getHeaderNames()) {
             const header = this.getHeader(name);
 
             if (typeof header === "undefined") continue;
