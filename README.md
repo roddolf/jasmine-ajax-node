@@ -1,5 +1,6 @@
 # Jasmine Ajax Node
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/a264ceeb640042f8a1abf70a9fc87bbc)](https://app.codacy.com/app/roddolf/jasmine-ajax-node?utm_source=github.com&utm_medium=referral&utm_content=roddolf/jasmine-ajax-node&utm_campaign=Badge_Grade_Settings)
 [![npm version](https://badge.fury.io/js/jasmine-ajax-node.svg)](https://badge.fury.io/js/jasmine-ajax-node)
 [![codecov](https://codecov.io/gh/roddolf/jasmine-ajax-node/branch/master/graph/badge.svg)](https://codecov.io/gh/roddolf/jasmine-ajax-node)
 [![CircleCI](https://circleci.com/gh/roddolf/jasmine-ajax-node/tree/master.svg?style=svg)](https://circleci.com/gh/roddolf/jasmine-ajax-node/tree/master)
