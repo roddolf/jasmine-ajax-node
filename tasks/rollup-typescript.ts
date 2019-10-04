@@ -1,7 +1,7 @@
 import path from "path";
-import { rollup } from "rollup";
+import {rollup} from "rollup";
 import typescript from "rollup-plugin-typescript2";
-import { config } from "./common";
+import {config} from "./common";
 
 
 export const compile = async () => {
@@ -24,6 +24,9 @@ export const compile = async () => {
                         declaration: true,
                         declarationDir: config.temp.path
                     },
+                    include: [
+                        config.src.files,
+                    ],
                 },
             })
         ]
@@ -37,5 +40,5 @@ export const compile = async () => {
         sourcemap: true,
         sourcemapExcludeSources: true,
     });
-}
+};
 compile.displayName = "compile";

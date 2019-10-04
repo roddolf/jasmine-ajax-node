@@ -1,4 +1,4 @@
-const packageName = "jasmine-ajax-node"
+const packageName = "jasmine-ajax-node";
 
 export const config = {
     packageName,

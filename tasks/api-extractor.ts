@@ -1,35 +1,56 @@
-import { Extractor, IExtractorConfig, IExtractorOptions } from "@microsoft/api-extractor";
+import {Extractor, ExtractorConfig, ExtractorLogLevel, ExtractorResult} from "@microsoft/api-extractor";
 import path from "path";
-import { config } from "./common";
+import {config} from "./common";
 
 
 export const extractAPI = async () => {
-    const extractorConfig: IExtractorConfig = {
-        compiler: {
-            configType: "tsconfig",
-            rootFolder: ".",
+    const extractorConfig: ExtractorConfig = ExtractorConfig.prepare({
+        configObject: {
+            apiReport: {
+                enabled: false,
+                reportFileName: config.packageName + ".api.md",
+            },
+            compiler: {
+                tsconfigFilePath: path.resolve(__dirname, "../tsconfig.json"),
+            },
+            dtsRollup: {
+                enabled: true,
+                untrimmedFilePath: path.resolve(config.dist.path, config.dist.mainDTS),
+            },
+            mainEntryPointFilePath: path.resolve(config.temp.path, config.temp.mainDTS),
+            messages: {
+                compilerMessageReporting: {
+                    default: {
+                        logLevel: ExtractorLogLevel.Warning,
+                    },
+                },
+                extractorMessageReporting: {
+                    default: {
+                        logLevel: ExtractorLogLevel.Warning,
+                    },
+                },
+                tsdocMessageReporting: {
+                    default: {
+                        logLevel: ExtractorLogLevel.Warning,
+                    },
+                },
+            },
+            projectFolder: path.resolve(__dirname, "../"),
         },
-        project: {
-            entryPointSourceFile: path.resolve(config.temp.path, config.temp.mainDTS),
-        },
-        apiReviewFile: {
-            enabled: false,
-        },
-        apiJsonFile: {
-            enabled: false,
-        },
-        dtsRollup: {
-            enabled: true,
-            trimming: false,
-        },
-    };
+        configObjectFullPath: undefined,
+        packageJsonFullPath: path.resolve(__dirname, "../package.json"),
+    });
 
-    const extractorOptions: IExtractorOptions = {
-        localBuild: false,
+    const extractorResult: ExtractorResult = Extractor.invoke(extractorConfig, {
+        localBuild: true,
+        showVerboseMessages: true,
+    });
+
+    if (!extractorResult.succeeded) {
+        return Promise.reject(
+            `API Extractor completed with ${extractorResult.errorCount} errors`
+            + ` and ${extractorResult.warningCount} warnings`,
+        );
     }
-
-    const extractor = new Extractor(extractorConfig, extractorOptions);
-
-    extractor.analyzeProject();
-}
+};
 extractAPI.displayName = "extractAPI";
