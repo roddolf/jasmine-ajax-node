@@ -5,7 +5,8 @@
   "main": "dist/jasmine-ajax-node.js",
   "typings": "dist/jasmine-ajax-node.d.ts",
   "scripts": {
-    "start": "gulp build",
+    "start": "npm run build",
+    "build": "gulp build",
     "test": "gulp test",
     "coverage": "gulp coverage && gulp sendCoverage"
   },

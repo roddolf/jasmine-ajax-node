@@ -8,8 +8,8 @@ import { RequestStub } from './RequestStub';
 import { Response } from './Response';
 
 /**
- * Fake {@link http.ClientRequest} to be used instead a request call.
- * 
+ * Fake {@link http#ClientRequest} to be used instead a request call.
+ *
  * @public
  */
 export class FakeRequest extends http.ClientRequest {
@@ -49,7 +49,7 @@ export class FakeRequest extends http.ClientRequest {
         this.requestBodyBuffers = [];
         this.responseBodyBuffers = [];
 
-        this.url = this._createURL(options);
+        this.url = FakeRequest._createURL(options);
 
         this.requestHeaders = this.getHeaders();
         if (options.headers && !options.headers.hasOwnProperty("host"))
@@ -157,7 +157,7 @@ export class FakeRequest extends http.ClientRequest {
     }
 
 
-    private _createURL(options: http.ClientRequestArgs): string {
+    private static _createURL(options: http.ClientRequestArgs): string {
         let url: string = "";
 
         if (options.protocol)
