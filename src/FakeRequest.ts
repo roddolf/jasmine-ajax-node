@@ -56,6 +56,25 @@ export class FakeRequest extends http.ClientRequest {
             delete this.requestHeaders["host"];
     }
 
+
+    private static _createURL(options: http.ClientRequestArgs): string {
+        let url: string = "";
+
+        if (options.protocol)
+            url += `${options.protocol}//`;
+
+        if (options.hostname || options.host)
+            url += options.hostname || options.host;
+
+        if (options.path)
+            url += options.path;
+
+        url = url.replace(/\+/g, ' ');
+
+        return decodeURIComponent(url);
+    }
+
+
     respondWith(response: Response): void {
         if (this.ended) return;
 
@@ -156,23 +175,6 @@ export class FakeRequest extends http.ClientRequest {
         return false;
     }
 
-
-    private static _createURL(options: http.ClientRequestArgs): string {
-        let url: string = "";
-
-        if (options.protocol)
-            url += `${options.protocol}//`;
-
-        if (options.hostname || options.host)
-            url += options.hostname || options.host;
-
-        if (options.path)
-            url += options.path;
-
-        url = url.replace(/\+/g, ' ');
-
-        return decodeURIComponent(url);
-    }
 
     private _responseWithStub(): void {
         if (this.ended) return;

@@ -5,11 +5,11 @@ import {config} from "./common";
 
 export const extractAPI = async () => {
     const extractorConfig: ExtractorConfig = ExtractorConfig.prepare({
-        configObjectFullPath: undefined,
-        packageJsonFullPath: path.resolve(__dirname, "../package.json"),
         configObject: {
-            projectFolder: path.resolve(__dirname, "../"),
-            mainEntryPointFilePath: path.resolve(config.temp.path, config.temp.mainDTS),
+            apiReport: {
+                enabled: false,
+                reportFileName: config.packageName + ".api.md",
+            },
             compiler: {
                 tsconfigFilePath: path.resolve(__dirname, "../tsconfig.json"),
             },
@@ -17,10 +17,7 @@ export const extractAPI = async () => {
                 enabled: true,
                 untrimmedFilePath: path.resolve(config.dist.path, config.dist.mainDTS),
             },
-            apiReport: {
-                enabled: false,
-                reportFileName: config.packageName + ".api.md",
-            },
+            mainEntryPointFilePath: path.resolve(config.temp.path, config.temp.mainDTS),
             messages: {
                 compilerMessageReporting: {
                     default: {
@@ -37,8 +34,11 @@ export const extractAPI = async () => {
                         logLevel: ExtractorLogLevel.Warning,
                     },
                 },
-            }
+            },
+            projectFolder: path.resolve(__dirname, "../"),
         },
+        configObjectFullPath: undefined,
+        packageJsonFullPath: path.resolve(__dirname, "../package.json"),
     });
 
     const extractorResult: ExtractorResult = Extractor.invoke(extractorConfig, {
@@ -49,7 +49,7 @@ export const extractAPI = async () => {
     if (!extractorResult.succeeded) {
         return Promise.reject(
             `API Extractor completed with ${extractorResult.errorCount} errors`
-            + ` and ${extractorResult.warningCount} warnings`
+            + ` and ${extractorResult.warningCount} warnings`,
         );
     }
 };
