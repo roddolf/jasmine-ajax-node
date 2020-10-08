@@ -15,7 +15,13 @@ settings:
   import/resolver:
     typescript: {}
 rules:
-  "indent": ["error", 2]
+  indent:
+    - error
+    - 2
+    - SwitchCase: 1
+  object-curly-spacing:
+    - error
+    - always
   no-multiple-empty-lines:
     - error
     - max: 2
