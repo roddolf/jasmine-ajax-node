@@ -1,7 +1,7 @@
 import path from "path";
-import {rollup} from "rollup";
+import { rollup } from "rollup";
 import typescript from "rollup-plugin-typescript2";
-import {config} from "./common";
+import { config } from "./common";
 
 
 export const compile = async () => {

@@ -1,6 +1,6 @@
-import {Extractor, ExtractorConfig, ExtractorLogLevel, ExtractorResult} from "@microsoft/api-extractor";
+import { Extractor, ExtractorConfig, ExtractorLogLevel, ExtractorResult } from "@microsoft/api-extractor";
 import path from "path";
-import {config} from "./common";
+import { config } from "./common";
 
 
 export const extractAPI = async () => {
