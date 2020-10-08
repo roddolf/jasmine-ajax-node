@@ -94,7 +94,7 @@ workflows:
               only: /.*/
             branches:
               only: /.*/
-      - test:
+      - lint:
           filters:
             tags:
               only: /.*/
