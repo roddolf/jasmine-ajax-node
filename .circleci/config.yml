@@ -45,6 +45,15 @@ jobs:
 
       - run: npm run coverage
 
+  lint:
+    <<: *common
+
+    steps:
+      - attach_workspace:
+          at: ~/
+
+      - run: npm run lint
+
   publish:
     <<: *common
 
@@ -85,9 +94,16 @@ workflows:
               only: /.*/
             branches:
               only: /.*/
+      - test:
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              only: /.*/
       - publish:
           requires:
             - test
+            - lint
           filters:
             tags:
               only: /^v\d+\.\d+\.\d+$/
@@ -96,6 +112,7 @@ workflows:
       - publish-next:
           requires:
             - test
+            - lint
           filters:
             tags:
               only: /^v.*[a-zA-Z]+\.\d+$/
