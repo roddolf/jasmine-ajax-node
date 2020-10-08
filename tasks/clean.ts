@@ -1,13 +1,13 @@
 import del from "del";
-import { parallel } from "gulp";
+import { parallel, TaskFunction } from "gulp";
 import { config } from "./common";
 
 
-export const cleanDist = () => del(config.dist.path);
+export const cleanDist: TaskFunction = () => del(config.dist.path);
 cleanDist.displayName = "cleanDist";
 
-export const cleanTemp = () => del(config.temp.path);
+export const cleanTemp: TaskFunction = () => del(config.temp.path);
 cleanTemp.displayName = "cleanTemp";
 
-export const cleanAll = parallel(cleanDist, cleanTemp);
+export const cleanAll: TaskFunction = parallel(cleanDist, cleanTemp);
 cleanAll.displayName = "cleanAll";
