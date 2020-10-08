@@ -1,14 +1,14 @@
 import del from "del";
 import { dest, series, src } from "gulp";
+// @ts-ignore
+import codecov from "gulp-codecov";
 import istanbul from "gulp-istanbul";
 import jasmine from "gulp-jasmine";
 import sourcemaps from "gulp-sourcemaps";
 import typescript from "gulp-typescript";
-import { SpecReporter } from "jasmine-spec-reporter";
+import { SpecReporter, StacktraceOption } from "jasmine-spec-reporter";
 import path from "path";
 import { config } from "./common";
-// @ts-ignore
-import codecov from "gulp-codecov";
 
 
 export const compileTemp = () => {
@@ -32,7 +32,7 @@ export const testRun = () =>
         .pipe(jasmine({
             reporter: new SpecReporter({
                 summary: {
-                    displayStacktrace: true,
+                    displayStacktrace: StacktraceOption.PRETTY,
                 },
             }),
         }))
@@ -58,7 +58,7 @@ export const coverageRun = () =>
         .pipe(jasmine({
             reporter: new SpecReporter({
                 summary: {
-                    displayStacktrace: true,
+                    displayStacktrace: StacktraceOption.PRETTY,
                 },
             }),
         }))
