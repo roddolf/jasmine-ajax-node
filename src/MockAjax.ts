@@ -33,8 +33,8 @@ export class MockAjax {
     if (this.requestOverride) throw new Error('Mock Jasmine Ajax is already installed.');
 
     this.requestOverride = {};
-    this.overrideRequestFrom('http');
-    this.overrideRequestFrom('https');
+    this._overrideRequestFrom('http');
+    this._overrideRequestFrom('https');
   }
 
   uninstall(): void {
@@ -60,7 +60,7 @@ export class MockAjax {
     return stub;
   }
 
-  private overrideRequestFrom(protocol: 'http' | 'https'): void {
+  private _overrideRequestFrom(protocol: 'http' | 'https'): void {
     if (!this.requestOverride) throw new Error('Mock Jasmine Ajax is not installed.');
     if (this.requestOverride[protocol]) throw new Error(`Mock request already installed over "${protocol}"`);
 
@@ -68,13 +68,13 @@ export class MockAjax {
 
     this.requestOverride[protocol] = { module, request: module.request };
 
-    module.request = this.mockRequest;
+    module.request = this._mockRequest;
   }
 
 
-  private mockRequest(options: http.RequestOptions | string | URL, callback?: (res: http.IncomingMessage) => void): http.ClientRequest;
-  private mockRequest(url: string | URL, options: http.RequestOptions, callback?: (res: http.IncomingMessage) => void): http.ClientRequest;
-  private mockRequest(optionsOrUrl: http.RequestOptions | string | URL, callbackOrOptions?: ((res: http.IncomingMessage) => void) | http.RequestOptions, callback?: (res: http.IncomingMessage) => void): http.ClientRequest {
+  private _mockRequest(options: http.RequestOptions | string | URL, callback?: (res: http.IncomingMessage) => void): http.ClientRequest;
+  private _mockRequest(url: string | URL, options: http.RequestOptions, callback?: (res: http.IncomingMessage) => void): http.ClientRequest;
+  private _mockRequest(optionsOrUrl: http.RequestOptions | string | URL, callbackOrOptions?: ((res: http.IncomingMessage) => void) | http.RequestOptions, callback?: (res: http.IncomingMessage) => void): http.ClientRequest {
     if (typeof callbackOrOptions === 'function') callback = callbackOrOptions;
 
     if (typeof callbackOrOptions === 'object') {

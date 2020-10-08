@@ -6,23 +6,23 @@ import { RequestStub } from './RequestStub';
  * @public
  */
 export class StubTracker {
-    private stubs: RequestStub[];
+  private stubs: RequestStub[];
 
-    constructor() {
-      this.stubs = [];
-    }
+  constructor() {
+    this.stubs = [];
+  }
 
-    addStub(stub: RequestStub): void {
-      this.stubs.unshift(stub);
-    }
+  addStub(stub: RequestStub): void {
+    this.stubs.unshift(stub);
+  }
 
-    findStub(url: string, data?: string, method?: string): RequestStub | undefined {
-      return this
-        .stubs
-        .find(stub => stub.matches(url, data, method));
-    }
+  findStub(url: string, data?: string, method?: string): RequestStub | undefined {
+    return this
+      .stubs
+      .find(stub => stub.matches(url, data, method));
+  }
 
-    reset(): void {
-      this.stubs.length = 0;
-    }
+  reset(): void {
+    this.stubs.length = 0;
+  }
 }
