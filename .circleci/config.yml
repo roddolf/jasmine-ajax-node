@@ -38,6 +38,9 @@ jobs:
     <<: *common
 
     steps:
+      - attach_workspace:
+          at: ~/
+
       - run: npm start
 
       # Persist the specified paths into the workspace.
