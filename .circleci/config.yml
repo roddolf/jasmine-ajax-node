@@ -1,6 +1,6 @@
 common: &common
   docker:
-    - image: circleci/node:8
+    - image: circleci/node:12
   working_directory: ~/workspace
 
 add_npm_token: &add_npm_token echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
