@@ -1,4 +1,5 @@
 import events from 'events';
+import { Socket } from 'net';
 
 /**
  * @internal
@@ -10,7 +11,7 @@ export interface SocketOptions {
 /**
  * @internal
  */
-export class Socket extends events.EventEmitter {
+export class FakeSocket extends events.EventEmitter {
   authorized?: boolean;
   writable: boolean;
   readable: boolean;
@@ -44,9 +45,11 @@ export class Socket extends events.EventEmitter {
     this.timeoutMs = null;
   }
 
-  setTimeout(timeoutMs: number, fn: () => void): void {
+  setTimeout(timeoutMs: number, fn?: () => void): this {
     this.timeoutMs = timeoutMs;
     this.timeoutFunction = fn;
+
+    return this;
   }
 
   applyDelay(delayMs: number): void {
