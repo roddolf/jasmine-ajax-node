@@ -1,51 +1,54 @@
 import http from 'http';
+import { Socket } from 'net';
 
 /**
  * Extended options for a fake agent.
- * 
+ *
  * @public
  */
 export interface FakeAgentOptions extends http.AgentOptions {
-    protocol?: string;
+  protocol?: string;
 }
 
 
 /**
  * Mock agent class to avoid request been sent.
- * 
+ *
  * @public
  */
 export class FakeAgent implements http.Agent {
-    options: http.AgentOptions;
-    sockets: any;
-    requests: any;
-    maxSockets: number;
-    maxFreeSockets: number;
+  options: http.AgentOptions;
+  protocol: string | undefined;
 
-    protocol: string | undefined;
+  sockets: { readonly [key: string]: Socket[]; };
+  requests: { readonly [key: string]: http.IncomingMessage[]; };
+  maxSockets: number;
+  maxFreeSockets: number;
 
-    static is(value: unknown): value is FakeAgent {
-        return typeof value === "object"
-            && value !== null
-            && "addRequest" in value;
-    }
+  static is(value: unknown): value is FakeAgent {
+    return typeof value === 'object'
+      && value !== null
+      && 'addRequest' in value;
+  }
 
-    constructor(options: FakeAgentOptions = {}) {
-        this.protocol = options.protocol;
+  constructor(options: FakeAgentOptions = {}) {
+    this.protocol = options.protocol;
+    this.options = options;
 
-        this.options = options;
+    this.sockets = {};
+    this.requests = {};
+    this.maxSockets = Infinity;
+    this.maxFreeSockets = Infinity;
+  }
 
-        this.maxSockets = Infinity;
-        this.maxFreeSockets = Infinity;
-    }
+  destroy(): void {
+    this.sockets = {};
+    this.requests = {};
+  }
 
-
-    destroy(): void {
-        this.sockets = null;
-        this.requests = null;
-    }
-
-
-    // Methods Node.js require to be recognized as Agent like.
-    addRequest(): void { }
+  // Methods Node.js require to be recognized as Agent like.
+  // eslint-disable-next-line class-methods-use-this
+  addRequest(): void {
+    // To nothing with the request
+  }
 }

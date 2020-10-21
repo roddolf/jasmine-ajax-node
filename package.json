@@ -8,6 +8,7 @@
     "start": "npm run build",
     "build": "gulp build",
     "test": "gulp test",
+    "lint": "eslint . --ext .ts",
     "coverage": "gulp coverage && gulp sendCoverage"
   },
   "repository": {
@@ -30,7 +31,7 @@
   },
   "homepage": "https://github.com/roddolf/jasmine-ajax-node#readme",
   "devDependencies": {
-    "@microsoft/api-extractor": "^7.4.6",
+    "@microsoft/api-extractor": "^7.10.4",
     "@types/del": "^4.0.0",
     "@types/gulp": "^4.0.7",
     "@types/gulp-filter": "^3.0.33",
@@ -39,7 +40,11 @@
     "@types/gulp-sourcemaps": "0.0.32",
     "@types/jasmine": "^3.5.14",
     "@types/node": "^12.7.11",
+    "@typescript-eslint/eslint-plugin": "^4.4.0",
+    "@typescript-eslint/parser": "^4.4.0",
     "del": "^6.0.0",
+    "eslint": "^7.10.0",
+    "eslint-import-resolver-typescript": "^2.3.0",
     "gulp": "^4.0.2",
     "gulp-codecov": "^3.0.5",
     "gulp-filter": "^6.0.0",
