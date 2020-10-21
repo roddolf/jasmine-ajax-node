@@ -110,7 +110,7 @@ workflows:
               only: /.*/
       - test:
           requires:
-            - build
+            - checkout
           filters:
             tags:
               only: /.*/
@@ -126,6 +126,7 @@ workflows:
               only: /.*/
       - publish:
           requires:
+            - build
             - test
             - lint
           filters:
@@ -135,6 +136,7 @@ workflows:
               ignore: /.*/
       - publish-next:
           requires:
+            - build
             - test
             - lint
           filters:
