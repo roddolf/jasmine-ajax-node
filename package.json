@@ -31,7 +31,7 @@
   },
   "homepage": "https://github.com/roddolf/jasmine-ajax-node#readme",
   "devDependencies": {
-    "@microsoft/api-extractor": "^7.4.6",
+    "@microsoft/api-extractor": "^7.10.4",
     "@types/del": "^4.0.0",
     "@types/gulp": "^4.0.7",
     "@types/gulp-filter": "^3.0.33",
