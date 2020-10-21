@@ -7,7 +7,7 @@ add_npm_token: &add_npm_token echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN"
 
 version: 2
 jobs:
-  build:
+  checkout:
     <<: *common
 
     steps:
@@ -27,6 +27,14 @@ jobs:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
 
+      # Persist the specified paths into the workspace.
+      - persist_to_workspace:
+          root: ~/
+          # Must be relative path from root
+          paths:
+            - workspace
+
+    build:
       - run: npm start
 
       # Persist the specified paths into the workspace.
@@ -80,7 +88,15 @@ workflows:
   version: 2
   build_and_publish:
     jobs:
+      - checkout:
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              only: /.*/
       - build:
+          requires:
+            - checkout
           filters:
             tags:
               only: /.*/
@@ -95,6 +111,8 @@ workflows:
             branches:
               only: /.*/
       - lint:
+          requires:
+            - checkout
           filters:
             tags:
               only: /.*/
