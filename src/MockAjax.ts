@@ -1,5 +1,4 @@
 import http from 'http';
-import https from 'https';
 import { parse, URL } from 'url';
 import { FakeRequest } from './FakeRequest';
 import { RequestStub } from './RequestStub';
@@ -17,58 +16,45 @@ export class MockAjax {
 
   readonly requests: RequestTracker;
 
-  private requestOverride?: {
-    [protocol: string]: {
-      module: typeof http | typeof https;
-      request: typeof http.request;
-    };
-  };
+  private modules: { [protocol: string]: { request: typeof http.request } };
+  private requestOverrides?: { [protocol: string]: typeof http.request };
 
-  constructor() {
+  constructor(modules: { [protocol: string]: { request: typeof http.request } }) {
+    this.modules = modules;
     this.stubs = new StubTracker();
     this.requests = new RequestTracker();
   }
 
   install(): void {
-    if (this.requestOverride) throw new Error('Mock Jasmine Ajax is already installed.');
+    if (this.requestOverrides) throw new Error('Mock Jasmine Ajax is already installed.');
 
-    this.requestOverride = {};
-    this._overrideRequestFrom('http');
-    this._overrideRequestFrom('https');
+    this.requestOverrides = {};
+    for (const [protocol, module] of Object.entries(this.modules)) {
+      // Store original method
+      this.requestOverrides[protocol] = module.request;
+      // Replace request method
+      module.request = this._mockRequest.bind(this);
+    }
   }
 
   uninstall(): void {
-    const { requestOverride } = this;
-    if (!requestOverride) throw new Error('Mock Jasmine Ajax is not installed.');
+    if (!this.requestOverrides) throw new Error('Mock Jasmine Ajax is not installed.');
 
     //  Restore any overridden requests.
-    Object
-      .keys(requestOverride)
-      .forEach((protocol) => {
-        requestOverride[protocol].module.request = requestOverride[protocol].request;
-      });
+    for (const [protocol, module] of Object.entries(this.modules)) {
+      module.request = this.requestOverrides[protocol];
+    }
 
-    this.requestOverride = undefined;
+    this.requestOverrides = undefined;
 
     this.stubs.reset();
     this.requests.reset();
   }
 
-  stubRequest(url: string | RegExp, data: string | RegExp | null, method: string): RequestStub {
+  stubRequest(url: string | RegExp, data?: string | RegExp | null, method?: string | null): RequestStub {
     const stub: RequestStub = new RequestStub(url, data, method);
     this.stubs.addStub(stub);
     return stub;
-  }
-
-  private _overrideRequestFrom(protocol: 'http' | 'https'): void {
-    if (!this.requestOverride) throw new Error('Mock Jasmine Ajax is not installed.');
-    if (this.requestOverride[protocol]) throw new Error(`Mock request already installed over "${protocol}"`);
-
-    const module: typeof http | typeof https = { http, https }[protocol];
-
-    this.requestOverride[protocol] = { module, request: module.request };
-
-    module.request = this._mockRequest;
   }
 
 

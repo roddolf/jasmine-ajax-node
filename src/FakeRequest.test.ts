@@ -1,3 +1,4 @@
+import http from 'http';
 import { URL } from 'url';
 import { FakeAgent } from './FakeAgent';
 import { FakeRequest } from "./FakeRequest";
@@ -6,11 +7,17 @@ import { MockAjax } from './MockAjax';
 
 describe('FakeRequest', () => {
 
+  let mockAjax: MockAjax;
+  beforeEach(() => {
+    mockAjax = new MockAjax({ http });
+  })
+
+
   describe('Creation', () => {
 
     it('should create instance', () => {
       const instance = new FakeRequest(
-        new MockAjax(),
+        mockAjax,
         {}
       );
 
@@ -23,7 +30,7 @@ describe('FakeRequest', () => {
 
     it('should set url from string', () => {
       const instance = new FakeRequest(
-        new MockAjax(),
+        mockAjax,
         'http://localhost:8080/path'
       );
 
@@ -36,7 +43,7 @@ describe('FakeRequest', () => {
 
     it('should set url from URL object', () => {
       const instance = new FakeRequest(
-        new MockAjax(),
+        mockAjax,
         new URL('http://localhost:8080/path')
       );
 
@@ -49,7 +56,7 @@ describe('FakeRequest', () => {
 
     it('should set url from object options', () => {
       const instance = new FakeRequest(
-        new MockAjax(),
+        mockAjax,
         {
           protocol: 'http:',
           hostname: 'localhost',
@@ -67,7 +74,7 @@ describe('FakeRequest', () => {
 
     it('should ignore port if host provided on options', () => {
       const instance = new FakeRequest(
-        new MockAjax(),
+        mockAjax,
         {
           protocol: 'http:',
           host: 'localhost:8080',
@@ -85,7 +92,7 @@ describe('FakeRequest', () => {
 
     it('should add protocol from agent if no provided', () => {
       const instance = new FakeRequest(
-        new MockAjax(),
+        mockAjax,
         {
           agent: new FakeAgent({ protocol: 'https:' }),
           hostname: 'localhost',
@@ -103,7 +110,7 @@ describe('FakeRequest', () => {
 
     it('should set method if in options', () => {
       const instance = new FakeRequest(
-        new MockAjax(),
+        mockAjax,
         {
           method: 'POST',
         }
@@ -118,7 +125,7 @@ describe('FakeRequest', () => {
 
     it('should set default method if string', () => {
       const instance = new FakeRequest(
-        new MockAjax(),
+        mockAjax,
         'http://localhost:8080/path'
       );
 
@@ -131,7 +138,7 @@ describe('FakeRequest', () => {
 
     it('should set default method if URL object', () => {
       const instance = new FakeRequest(
-        new MockAjax(),
+        mockAjax,
         new URL('http://localhost:8080/path')
       );
 
@@ -144,7 +151,7 @@ describe('FakeRequest', () => {
 
     it('should set default method if no in options', () => {
       const instance = new FakeRequest(
-        new MockAjax(),
+        mockAjax,
         {
           method: undefined,
         }
@@ -159,7 +166,7 @@ describe('FakeRequest', () => {
 
     it('should set default headers if no provided', () => {
       const instance = new FakeRequest(
-        new MockAjax(),
+        mockAjax,
         {}
       );
 
@@ -173,7 +180,7 @@ describe('FakeRequest', () => {
 
     it('should set provided headers', () => {
       const instance = new FakeRequest(
-        new MockAjax(),
+        mockAjax,
         {
           headers: {
             'header1': 1,
@@ -196,7 +203,7 @@ describe('FakeRequest', () => {
 
     it('should not override with default headers', () => {
       const instance = new FakeRequest(
-        new MockAjax(),
+        mockAjax,
         {
           headers: {
             'host': 'http://example.com',
@@ -215,7 +222,7 @@ describe('FakeRequest', () => {
 
     it('should set params with string body on write', () => {
       const instance = new FakeRequest(
-        new MockAjax(),
+        mockAjax,
         {
           headers: {
             'host': 'http://example.com',
@@ -234,7 +241,7 @@ describe('FakeRequest', () => {
 
     it('should set params with string Buffer body on write', () => {
       const instance = new FakeRequest(
-        new MockAjax(),
+        mockAjax,
         {
           headers: {
             'host': 'http://example.com',
@@ -253,7 +260,7 @@ describe('FakeRequest', () => {
 
     it('should set params with binary Buffer body on write', () => {
       const instance = new FakeRequest(
-        new MockAjax(),
+        mockAjax,
         {
           headers: {
             'host': 'http://example.com',
@@ -272,7 +279,7 @@ describe('FakeRequest', () => {
 
     it('should set params with string body on end', () => {
       const instance = new FakeRequest(
-        new MockAjax(),
+        mockAjax,
         {
           headers: {
             'host': 'http://example.com',
@@ -296,7 +303,7 @@ describe('FakeRequest', () => {
       };
 
       const instance = new FakeRequest(
-        new MockAjax(),
+        mockAjax,
         {},
         callback
       );
@@ -313,7 +320,7 @@ describe('FakeRequest', () => {
       };
 
       const instance = new FakeRequest(
-        new MockAjax(),
+        mockAjax,
         {},
         callback
       );
@@ -325,7 +332,7 @@ describe('FakeRequest', () => {
 
     it('should return status from response', done => {
       const instance = new FakeRequest(
-        new MockAjax(),
+        mockAjax,
         {}
       );
       instance.end();
@@ -344,7 +351,7 @@ describe('FakeRequest', () => {
 
     it('should return headers from response', done => {
       const instance = new FakeRequest(
-        new MockAjax(),
+        mockAjax,
         {}
       );
       instance.end();
@@ -369,7 +376,7 @@ describe('FakeRequest', () => {
 
     it('should return response body from response', done => {
       const instance = new FakeRequest(
-        new MockAjax(),
+        mockAjax,
         {}
       );
 
@@ -390,7 +397,7 @@ describe('FakeRequest', () => {
 
     it('should return response text body from response', done => {
       const instance = new FakeRequest(
-        new MockAjax(),
+        mockAjax,
         {}
       );
       
@@ -411,7 +418,7 @@ describe('FakeRequest', () => {
 
     it('should return default body from response', done => {
       const instance = new FakeRequest(
-        new MockAjax(),
+        mockAjax,
         {}
       );
       
@@ -440,7 +447,7 @@ describe('FakeRequest', () => {
       jasmine.clock().install();
 
       const instance = new FakeRequest(
-        new MockAjax(),
+        mockAjax,
         {}
       );
 
@@ -467,7 +474,7 @@ describe('FakeRequest', () => {
 
     it('should end request when flushed', () => {
       const instance = new FakeRequest(
-        new MockAjax(),
+        mockAjax,
         {}
       );
 
@@ -484,7 +491,7 @@ describe('FakeRequest', () => {
 
     it('should throw error if ending aborted request', done => {
       const instance = new FakeRequest(
-        new MockAjax(),
+        mockAjax,
         {}
       );
 
@@ -504,7 +511,7 @@ describe('FakeRequest', () => {
 
     it('should throw error if unsupported chunk', () => {
       const instance = new FakeRequest(
-        new MockAjax(),
+        mockAjax,
         {}
       );
 
@@ -515,7 +522,7 @@ describe('FakeRequest', () => {
 
     it('should throw error if unsupported encode', () => {
       const instance = new FakeRequest(
-        new MockAjax(),
+        mockAjax,
         {}
       );
 
@@ -526,7 +533,7 @@ describe('FakeRequest', () => {
 
     it('should throw error if write on aborted', done => {
       const instance = new FakeRequest(
-        new MockAjax(),
+        mockAjax,
         {}
       );
 
