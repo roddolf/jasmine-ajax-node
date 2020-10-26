@@ -54,7 +54,7 @@ export class MockAjax {
     this.requests.reset();
   }
 
-  stubRequest(url: string | RegExp, data: string | RegExp, method: string): RequestStub {
+  stubRequest(url: string | RegExp, data: string | RegExp | null, method: string): RequestStub {
     const stub: RequestStub = new RequestStub(url, data, method);
     this.stubs.addStub(stub);
     return stub;

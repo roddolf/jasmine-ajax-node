@@ -8,8 +8,8 @@ import { Response } from './Response';
  * @public
  */
 export class RequestStub implements Response {
-  data: string | RegExp;
-  method: string;
+  data: string | RegExp | null | undefined;
+  method: string | null | undefined;
 
   status?: number;
   response?: string;
@@ -22,7 +22,7 @@ export class RequestStub implements Response {
   private url: string | RegExp;
   private query: string | undefined;
 
-  constructor(url: string | RegExp, stubData: string | RegExp, method: string) {
+  constructor(url: string | RegExp, stubData?: string | RegExp | null, method?: string | null) {
     if (url instanceof RegExp) {
       this.url = url;
       this.query = void 0;
@@ -66,7 +66,7 @@ export class RequestStub implements Response {
     return urlMatches && dataMatches && methodMatches;
   }
 
-  private _normalizeQuery(query?: string): string | undefined {
+  private _normalizeQuery(query?: string | null): string | undefined {
     if (!query) return;
 
     return query
