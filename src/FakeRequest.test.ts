@@ -3,9 +3,18 @@ import { URL } from 'url';
 import { FakeAgent } from './FakeAgent';
 import { FakeRequest } from "./FakeRequest";
 import { MockAjax } from './MockAjax';
+import { RequestStub } from './RequestStub';
+import { Response } from './Response';
 
 
 describe('FakeRequest', () => {
+
+  class MockRequestStub extends RequestStub {
+    constructor(options: Response) {
+      super('');
+      Object.assign(this, options);
+    }
+  }
 
   let mockAjax: MockAjax;
   beforeEach(() => {
@@ -416,7 +425,7 @@ describe('FakeRequest', () => {
       });
     });
 
-    it('should return default body from response', done => {
+    it('should not return body when no response body', done => {
       const instance = new FakeRequest(
         mockAjax,
         {}
@@ -439,6 +448,123 @@ describe('FakeRequest', () => {
           done();
         })
       });
+    });
+
+    it('should return status from stub', done => {
+      spyOn(mockAjax.stubs, 'findStub')
+        .and.returnValue(new MockRequestStub({
+          status: 404,
+        }));
+
+      const instance = new FakeRequest(
+        mockAjax,
+        {}
+      );
+      instance.end();
+
+      instance.on('response', res => {
+        expect(res.statusCode).toEqual(404);
+
+        done();
+      });
+    });
+
+    it('should return headers from stub', done => {
+      spyOn(mockAjax.stubs, 'findStub')
+        .and.returnValue(new MockRequestStub({
+          responseHeaders: {
+            'header1': '1',
+            'header2': 'two',
+          }
+        }));
+
+      const instance = new FakeRequest(
+        mockAjax,
+        {}
+      );
+      instance.end();
+
+      instance.on('response', res => {
+        expect(res.headers).toEqual({
+          'header1': '1',
+          'header2': 'two',
+        });
+
+        done();
+      });
+    });
+
+    it('should return response body from stub', done => {
+      spyOn(mockAjax.stubs, 'findStub')
+        .and.returnValue(new MockRequestStub({
+          responseText: 'the response'
+        }));
+
+      const instance = new FakeRequest(
+        mockAjax,
+        {}
+      );
+
+      instance.on('response', res => {
+        expect(res).toBeDefined();
+
+        res.on('data', (chunk: Buffer) => {
+          expect(chunk.toString()).toEqual('the response');
+          done();
+        });
+      });
+
+      instance.end();
+    });
+
+    it('should return response text body from stub', done => {
+      spyOn(mockAjax.stubs, 'findStub')
+        .and.returnValue(new MockRequestStub({
+          responseText: 'the response'
+        }));
+
+      const instance = new FakeRequest(
+        mockAjax,
+        {}
+      );
+      
+      instance.on('response', res => {
+        expect(res).toBeDefined();
+
+        res.on('data', (chunk: Buffer) => {
+          expect(chunk.toString()).toEqual('the response');
+          done();
+        });
+      });
+
+      instance.end();
+    });
+
+    it('should not return body when no stub body', done => {
+      spyOn(mockAjax.stubs, 'findStub')
+        .and.returnValue(new MockRequestStub({
+        }));
+
+      const instance = new FakeRequest(
+        mockAjax,
+        {}
+      );
+
+      instance.on('response', res => {
+        expect(res).toBeDefined();
+
+        const spyData = jasmine.createSpy();
+
+        res.on('data', spyData);
+        
+        res.on('end', () => {
+          expect(spyData).not.toHaveBeenCalled();
+
+          done();
+        })
+      });
+
+      instance.end();
     });
 
     it('should not send response again if already ended', () => {
