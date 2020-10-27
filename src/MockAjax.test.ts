@@ -147,7 +147,7 @@ describe('MockAjax', () => {
     const mockAjax = new MockAjax({ 'http': module });
 
     mockAjax.install();
-    module.request(parse('http://example.com/'), () => undefined);
+    module.request(parse('http://example.com/'), jasmine.createSpy());
     expect(mockAjax.requests.mostRecent())
       .toEqual(jasmine.objectContaining({ url: 'http://example.com/' }));
   })
