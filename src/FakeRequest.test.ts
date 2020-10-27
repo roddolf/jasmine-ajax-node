@@ -609,6 +609,21 @@ describe('FakeRequest', () => {
       expect(instance.end).toHaveBeenCalled();
     });
 
+    it('should mock connection on socket event', done => {
+      const instance = new FakeRequest(
+        mockAjax,
+        {}
+      );
+
+      instance.on('socket', socket => {
+        socket.on('connect', () => {
+          expect(socket).toBeDefined();
+
+          done();
+        });
+      });
+    });
+
   })
 
   describe('Status validations', () => {

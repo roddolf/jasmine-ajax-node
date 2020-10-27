@@ -106,10 +106,8 @@ export class FakeRequest extends http.ClientRequest {
     const headers: FakeRequest['requestHeaders'] = {};
 
     for (const name of this.getHeaderNames()) {
-      const header = this.getHeader(name);
-
-      if (typeof header === 'undefined') continue;
-
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const header = this.getHeader(name)!;
       headers[name] = header.toString();
     }
 
