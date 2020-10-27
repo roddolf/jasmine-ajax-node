@@ -429,14 +429,12 @@ describe('FakeRequest', () => {
       instance.on('response', res => {
         expect(res).toBeDefined();
 
-        let onDataCalled = false;
+        const spyData = jasmine.createSpy();
 
-        res.on('data', () => {
-          onDataCalled = true;
-        });
+        res.on('data', spyData);
         
         res.on('end', () => {
-          expect(onDataCalled).toBe(false, 'On data was called but no data provided on response');
+          expect(spyData).not.toHaveBeenCalled();
 
           done();
         })
