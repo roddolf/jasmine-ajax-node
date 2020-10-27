@@ -1,7 +1,8 @@
 import http from 'http';
 import net from 'net';
+import stream from "stream";
 import timers from 'timers';
-import { parse, URL } from 'url';
+import { parse, URL, UrlWithStringQuery } from 'url';
 import { FakeAgent } from './FakeAgent';
 import type { MockAjax } from './MockAjax';
 import { RequestStub } from './RequestStub';
@@ -14,7 +15,8 @@ import { Response } from './Response';
  */
 export class FakeRequest extends http.ClientRequest {
   url: string;
-  method: string | undefined;
+  // Set by parent class
+  method!: string;
   params: string | undefined;
   requestHeaders: {
     [key: string]: string;
@@ -25,7 +27,7 @@ export class FakeRequest extends http.ClientRequest {
   private callback: ((res: http.IncomingMessage) => void) | undefined;
   private ended: boolean | undefined;
   private requestBodyBuffers: Buffer[];
-  private responseBodyBuffers: Buffer[];
+  private responseBodyBuffers: (Buffer | string)[];
 
   constructor(
     ajax: MockAjax,
@@ -36,7 +38,7 @@ export class FakeRequest extends http.ClientRequest {
       ? optionsOrURL
       : parse(optionsOrURL);
 
-    if (!options.protocol && FakeAgent.is(options.agent)) {
+    if (!options.protocol && 'agent' in options && FakeAgent.is(options.agent)) {
       options.protocol = options.agent.protocol;
     }
 
@@ -49,26 +51,33 @@ export class FakeRequest extends http.ClientRequest {
     this.callback = callback;
 
     this.aborted = 0;
+    // this.socket = this.connection = new FakeSocket() as any;
     this.res = new http.IncomingMessage(this.socket);
 
     this.requestBodyBuffers = [];
     this.responseBodyBuffers = [];
 
     this.url = FakeRequest.createURL(options);
+    // this.method = 'method' in options ? options.method ?? 'GET' : 'GET',
 
     this.requestHeaders = this.getHeaders();
-    if (options.headers && !('host' in options.headers)) { delete this.requestHeaders.host; }
+    if (!options.headers?.host) { delete this.requestHeaders.host; }
   }
 
 
-  private static createURL(options: http.ClientRequestArgs): string {
+  private static createURL(options: http.ClientRequestArgs | URL |UrlWithStringQuery): string {
     let url = '';
 
     if (options.protocol) { url += `${options.protocol}//`; }
 
-    if (options.hostname || options.host) { url += options.hostname || options.host; }
+    if (options.host) { url += options.host; }
+    else if (options.hostname) {
+      url += options.hostname; 
+      if (options.port) { url += ':' + options.port; }
+    }
 
-    if (options.path) { url += options.path; }
+    if ('path' in options) { url += options.path; }
+    else if ('pathname' in options) { url += options.pathname; }
 
     url = url.replace(/\+/g, ' ');
 
@@ -79,14 +88,12 @@ export class FakeRequest extends http.ClientRequest {
   respondWith(response: Response): void {
     if (this.ended) return;
 
-    this.res.statusCode = response.status || 200;
+    this.res.statusCode = response.status ?? 200;
     this.res.headers = response.responseHeaders ? { ...response.responseHeaders } : {};
 
-    if (response.response || response.responseText) {
-      const responseData: string | Buffer = response.response || response.responseText || '';
-      const responseBuffer: Buffer = Buffer.isBuffer(responseData)
-        ? responseData : Buffer.from(responseData);
-      this.responseBodyBuffers.push(responseBuffer);
+    const responseData = response.response ?? response.responseText;
+    if (responseData) {
+      this.responseBodyBuffers.push(responseData);
     }
 
     this._endFake();
@@ -99,14 +106,16 @@ export class FakeRequest extends http.ClientRequest {
     const headers: FakeRequest['requestHeaders'] = {};
 
     for (const name of this.getHeaderNames()) {
-      const header = this.getHeader(name);
-
-      if (typeof header === 'undefined') continue;
-
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const header = this.getHeader(name)!;
       headers[name] = header.toString();
     }
 
     return headers;
+  }
+
+  flushHeaders(): void {
+    this.end();
   }
 
   abort(): void {
@@ -131,39 +140,14 @@ export class FakeRequest extends http.ClientRequest {
     if (this.aborted) this._emitError(new Error('Request aborted'));
     if (this.ended) return;
 
-    this.write(chunk, encoding);
+    if(chunk) this.write(chunk, encoding);
     this._endFake();
 
     this.emit('finish');
     this.emit('end');
   }
 
-  flushHeaders(): void {
-    if (!this.aborted && !this.ended) this._endFake();
-    if (this.aborted) this._emitError(new Error('Request aborted'));
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  once(event: string, listener: (...args: any[]) => void): this {
-    return this.on(event, listener);
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  on(event: string, listener: (...args: any[]) => void): this {
-    if (event === 'socket') {
-      if (!this.socket) {
-        this.socket = new net.Socket();
-      }
-
-      listener.call(this, this.socket);
-      this.socket.emit('connect', this.socket);
-      this.socket.emit('secureConnect', this.socket);
-    }
-
-    return super.on(event, listener);
-  }
-
-  write(chunk: unknown, encoding?: unknown): boolean {
+  write(chunk: unknown, encoding: unknown = 'utf8'): boolean {
     if (typeof chunk !== 'string' && !Buffer.isBuffer(chunk)) throw new TypeError('Unsupported chunk type');
 
     if (chunk && !this.aborted) {
@@ -182,6 +166,65 @@ export class FakeRequest extends http.ClientRequest {
     return false;
   }
 
+  once(event: 'abort', listener: () => void): this;
+  once(event: 'connect', listener: (response: http.IncomingMessage, socket: net.Socket, head: Buffer) => void): this;
+  once(event: 'continue', listener: () => void): this;
+  once(event: 'information', listener: (info: http.InformationEvent) => void): this;
+  once(event: 'response', listener: (response: http.IncomingMessage) => void): this;
+  once(event: 'socket', listener: (socket: net.Socket) => void): this;
+  once(event: 'timeout', listener: () => void): this;
+  once(event: 'upgrade', listener: (response: http.IncomingMessage, socket: net.Socket, head: Buffer) => void): this;
+  once(event: 'close', listener: () => void): this;
+  once(event: 'drain', listener: () => void): this;
+  once(event: 'error', listener: (err: Error) => void): this;
+  once(event: 'finish', listener: () => void): this;
+  once(event: 'pipe', listener: (src: stream.Readable) => void): this;
+  once(event: 'unpipe', listener: (src: stream.Readable) => void): this;
+  once(event: string | symbol, listener: (...args: unknown[]) => void): this;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  once(event: string, listener: (...args: any[]) => void): this {
+    if (event === 'socket') {
+      return this._processSocketListener(listener);
+    }
+
+    return super.once(event, listener);
+  }
+
+  on(event: 'abort', listener: () => void): this;
+  on(event: 'connect', listener: (response: http.IncomingMessage, socket: net.Socket, head: Buffer) => void): this;
+  on(event: 'continue', listener: () => void): this;
+  on(event: 'information', listener: (info: http.InformationEvent) => void): this;
+  on(event: 'response', listener: (response: http.IncomingMessage) => void): this;
+  on(event: 'socket', listener: (socket: net.Socket) => void): this;
+  on(event: 'timeout', listener: () => void): this;
+  on(event: 'upgrade', listener: (response: http.IncomingMessage, socket: net.Socket, head: Buffer) => void): this;
+  on(event: 'close', listener: () => void): this;
+  on(event: 'drain', listener: () => void): this;
+  on(event: 'error', listener: (err: Error) => void): this;
+  on(event: 'finish', listener: () => void): this;
+  on(event: 'pipe', listener: (src: stream.Readable) => void): this;
+  on(event: 'unpipe', listener: (src: stream.Readable) => void): this;
+  on(event: string | symbol, listener: (...args: unknown[]) => void): this;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  on(event: string, listener: (...args: any[]) => void): this {
+    if (event === 'socket') {
+      return this._processSocketListener(listener);
+    }
+
+    return super.on(event, listener);
+  }
+
+  private _processSocketListener(listener: (socket: net.Socket) => void): this {
+    if (!this.socket) {
+      this.socket = new net.Socket();
+    }
+
+    listener.call(this, this.socket);
+    this.socket.emit('connect', this.socket);
+    this.socket.emit('secureConnect', this.socket);
+
+    return this;
+  }
 
   private _responseWithStub(): void {
     if (this.ended) return;
@@ -200,6 +243,7 @@ export class FakeRequest extends http.ClientRequest {
         : requestBodyBuffer.toString('utf8');
     }
 
+    // Try to response with stub if no previous response
     if (this.res.statusCode === null) return this._responseWithStub();
 
     this.ended = true;
@@ -212,23 +256,20 @@ export class FakeRequest extends http.ClientRequest {
         this.callback.call(void 0, this.res);
       }
 
-      if (this.aborted) {
-        this._emitError(new Error('Request aborted'));
-      } else {
-        this.emit('response', this.res);
-      }
+      this.emit('response', this.res);
 
       // Stream the response chunks one at a time.
       const responseBodyBuffers = this.responseBodyBuffers.concat();
-      const emitChunk: () => void = () => {
-        const chunk: Buffer | undefined = responseBodyBuffers.shift();
+      const emitChunk = () => {
+        const chunk = responseBodyBuffers.shift();
 
-        if (chunk) {
-          this.res.push(chunk);
-          timers.setImmediate(emitChunk);
-        } else {
+        if (chunk === undefined) {
           this.res.push(null);
+          return;
         }
+
+        this.res.push(chunk);
+        timers.setImmediate(emitChunk);
       };
 
       timers.setImmediate(emitChunk);
@@ -240,9 +281,7 @@ export class FakeRequest extends http.ClientRequest {
   }
 }
 
-function isBinaryBuffer(buffer: unknown) {
-  if (!Buffer.isBuffer(buffer)) return false;
-
+function isBinaryBuffer(buffer: Buffer) {
   //  Test if the buffer can be reconstructed verbatim from its utf8 encoding.
   const utfEncodedBuffer = buffer.toString('utf8');
   const reconstructedBuffer = Buffer.from(utfEncodedBuffer, 'utf8');

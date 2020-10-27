@@ -1,3 +1,4 @@
+import { URL } from 'url';
 import { FakeRequest } from './FakeRequest';
 
 /**
@@ -30,13 +31,19 @@ export class RequestTracker {
   }
 
   filter(urlToMatch: string | RegExp | ((request: FakeRequest) => boolean)): FakeRequest[] {
-    const filter: (request: FakeRequest) => boolean = urlToMatch instanceof Function
-      ? urlToMatch
-      : urlToMatch instanceof RegExp ?
-        request => urlToMatch.test(request.url) :
-        request => urlToMatch === request.url;
+    if (urlToMatch instanceof RegExp) {
+      const urlRegex = urlToMatch;
+      urlToMatch = request => 
+        urlRegex.test(request.url);
+    }
 
-    return this.requests.filter(filter);
+    if (typeof urlToMatch === 'string') {
+      const urlString = new URL(urlToMatch).toString();
+      urlToMatch = request =>
+        urlString === request.url;
+    }
+
+    return this.requests.filter(urlToMatch);
   }
 
   count(): number {
