@@ -2,8 +2,8 @@
   "name": "jasmine-ajax-node",
   "version": "1.0.1",
   "description": "Request mocking for Node.js using the same API as jasmine-ajax.",
-  "main": "dist/jasmine-ajax-node.js",
-  "typings": "dist/jasmine-ajax-node.d.ts",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
   "scripts": {
     "start": "npm run build",
     "build": "npm run clean && npm run compile",
