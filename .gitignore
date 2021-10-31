@@ -102,3 +102,8 @@ jspm_packages/
 .history
 
 # End of https://www.gitignore.io/api/node,visualstudiocode
+
+### Custom ###
+
+# JUnit test report
+**/junit.xml
