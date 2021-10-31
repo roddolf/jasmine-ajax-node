@@ -59,6 +59,13 @@ jobs:
 
       - run: npm run test:coverage
 
+      # Persist coverage reports into the workspace
+      - persist_to_workspace:
+          root: ~/
+          # Must be relative path from root
+          paths:
+            - workspace
+
   lint:
     <<: *common
 
