@@ -32,7 +32,6 @@
   },
   "homepage": "https://github.com/roddolf/jasmine-ajax-node",
   "devDependencies": {
-    "@microsoft/api-extractor": "^7.18.17",
     "@types/del": "^4.0.0",
     "@types/gulp": "^4.0.9",
     "@types/gulp-filter": "^3.0.34",
@@ -48,6 +47,7 @@
     "gulp-filter": "^7.0.0",
     "jest": "^27.3.1",
     "rollup": "^2.58.3",
+    "rollup-plugin-dts": "^4.0.0",
     "rollup-plugin-typescript2": "^0.30.0",
     "ts-jest": "^27.0.7",
     "ts-node": "^10.4.0",
