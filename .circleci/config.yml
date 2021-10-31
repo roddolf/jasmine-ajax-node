@@ -126,7 +126,7 @@ workflows:
               only: /.*/
       - test:
           requires:
-            - checkout
+            - build
           filters:
             tags:
               only: /.*/
@@ -134,7 +134,7 @@ workflows:
               only: /.*/
       - lint:
           requires:
-            - checkout
+            - build
           filters:
             tags:
               only: /.*/
