@@ -10,7 +10,7 @@
     "compile": "rollup --config rollup.config.ts --configPlugin rollup-plugin-typescript2",
     "test": "jest",
     "test:coverage": "jest --coverage",
-    "test:ci": "jest --coverage --ci --reporters=default --reporters=jest-junit",
+    "test:ci": "jest --coverage --ci --runInBand --reporters=default --reporters=jest-junit",
     "test:sendCoverage": "codecov",
     "lint": "eslint . --ext .ts",
     "clean": "npm run clean:dist && npm run clean:temp",
