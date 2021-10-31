@@ -6,12 +6,15 @@
     "importHelpers": true,
     "strict": true,
     "moduleResolution": "node",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "types": [
+      "@types/jest",
+      "@types/node",
+    ]
   },
   "exclude": [
     "dist",
     "temp",
-    "node_modules",
-    "**/*.spec.ts"
+    "node_modules"
   ]
 }
