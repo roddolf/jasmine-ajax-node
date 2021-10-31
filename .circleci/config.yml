@@ -57,7 +57,7 @@ jobs:
       - attach_workspace:
           at: ~/
 
-      - run: npm run coverage
+      - run: npm run test:coverage
 
   lint:
     <<: *common
@@ -67,6 +67,15 @@ jobs:
           at: ~/
 
       - run: npm run lint
+
+  sendCoverage:
+    <<: *common
+
+    steps:
+      - attach_workspace:
+          at: ~/
+
+      - run: npm run test:sendCoverage
 
   publish:
     <<: *common
@@ -119,6 +128,14 @@ workflows:
       - lint:
           requires:
             - checkout
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              only: /.*/
+      - sendCoverage:
+          requires:
+            - test
           filters:
             tags:
               only: /.*/

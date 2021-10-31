@@ -9,8 +9,9 @@
     "build": "npm run clean && npm run compile",
     "compile": "rollup --config rollup.config.ts --configPlugin rollup-plugin-typescript2",
     "test": "jest",
+    "test:coverage": "jest --coverage",
+    "test:sendCoverage": "codecov",
     "lint": "eslint . --ext .ts",
-    "coverage": "jest --coverage && codecov",
     "clean": "npm run clean:dist && npm run clean:temp",
     "clean:dist": "del-cli dist",
     "clean:temp": "del-cli temp"
