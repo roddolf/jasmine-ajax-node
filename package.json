@@ -6,7 +6,8 @@
   "typings": "dist/jasmine-ajax-node.d.ts",
   "scripts": {
     "start": "npm run build",
-    "build": "gulp build",
+    "build": "npm run compile",
+    "compile": "rollup --config rollup.config.ts --configPlugin rollup-plugin-typescript2",
     "test": "jest",
     "lint": "eslint . --ext .ts",
     "coverage": "jest --coverage && codecov"
