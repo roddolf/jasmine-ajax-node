@@ -9,7 +9,7 @@ describe('FakeAgent', () => {
     
     it('should create an instance', () => {
       const instance = new FakeAgent();
-      expect(instance).toEqual(jasmine.any(FakeAgent));
+      expect(instance).toEqual(expect.any(FakeAgent));
     })
 
     it('should save provided options', () => {
@@ -70,7 +70,7 @@ describe('FakeAgent', () => {
       instance.addRequest();
       const resultJSON = JSON.stringify(instance);
 
-      expect(originalJSON).toEqual(resultJSON, 'instance has changed');
+      expect(originalJSON).toEqual(resultJSON);
     })
 
   })

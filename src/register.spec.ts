@@ -1,9 +1,16 @@
 import { MockAjax } from "./MockAjax";
-import "./register";
 
 describe("register", () => {
-  it("should add Ajax const into jasmine global", () => {
+
+  beforeAll(() => {
+    // Mock global jasmine
+    globalThis.jasmine = {} as never;
+  });
+
+  it("should add Ajax const into jasmine global", async () => {
+    await import('./register');
+
     expect(jasmine.Ajax).toBeDefined();
-    expect(jasmine.Ajax).toEqual(jasmine.any(MockAjax));
+    expect(jasmine.Ajax).toEqual(expect.any(MockAjax));
   })
 })

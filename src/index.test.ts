@@ -1,5 +1,8 @@
 import * as Module from './index';
 
+// Mock register to not run execution
+jest.mock('./register', () => ({}));
+
 describe('index', () => {
 
   it('should reexport FakeAgent', () => {

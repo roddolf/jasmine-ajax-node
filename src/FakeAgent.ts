@@ -7,7 +7,7 @@ import { Socket } from 'net';
  * @public
  */
 export interface FakeAgentOptions extends http.AgentOptions {
-  protocol?: string;
+  protocol?: string | null;
 }
 
 
@@ -18,12 +18,13 @@ export interface FakeAgentOptions extends http.AgentOptions {
  */
 export class FakeAgent implements http.Agent {
   options: http.AgentOptions;
-  protocol: string | undefined;
+  protocol: string | undefined | null;
 
   sockets: { readonly [key: string]: Socket[]; };
   requests: { readonly [key: string]: http.IncomingMessage[]; };
   maxSockets: number;
   maxFreeSockets: number;
+  maxTotalSockets: number;
 
   static is(value: unknown): value is FakeAgent {
     return typeof value === 'object'
@@ -39,6 +40,7 @@ export class FakeAgent implements http.Agent {
     this.requests = {};
     this.maxSockets = Infinity;
     this.maxFreeSockets = Infinity;
+    this.maxTotalSockets = Infinity;
   }
 
   destroy(): void {

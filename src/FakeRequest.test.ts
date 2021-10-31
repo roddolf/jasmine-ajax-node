@@ -24,47 +24,42 @@ describe('FakeRequest', () => {
 
   describe('Creation', () => {
 
+    let instance: FakeRequest | undefined;
+    afterEach(() => {
+      // Abort execution to not send anything
+      instance?.on('error', () => null);
+      instance?.abort();
+    });
+
     it('should create instance', () => {
-      const instance = new FakeRequest(
+      instance = new FakeRequest(
         mockAjax,
         {}
       );
 
-      expect(instance).toEqual(jasmine.any(FakeRequest));
-
-      // Abort execution
-      instance.on('error', () => expect().nothing());
-      instance.abort();
+      expect(instance).toEqual(expect.any(FakeRequest));
     })
 
     it('should set url from string', () => {
-      const instance = new FakeRequest(
+      instance = new FakeRequest(
         mockAjax,
         'http://localhost:8080/path'
       );
 
       expect(instance.url).toEqual('http://localhost:8080/path');
-
-      // Abort execution
-      instance.on('error', () => expect().nothing());
-      instance.abort();
     })
 
     it('should set url from URL object', () => {
-      const instance = new FakeRequest(
+      instance = new FakeRequest(
         mockAjax,
         new URL('http://localhost:8080/path')
       );
 
       expect(instance.url).toEqual('http://localhost:8080/path');
-
-      // Abort execution
-      instance.on('error', () => expect().nothing());
-      instance.abort();
     })
 
     it('should set url from object options', () => {
-      const instance = new FakeRequest(
+      instance = new FakeRequest(
         mockAjax,
         {
           protocol: 'http:',
@@ -75,14 +70,10 @@ describe('FakeRequest', () => {
       );
 
       expect(instance.url).toEqual('http://localhost:8080/path');
-
-      // Abort execution
-      instance.on('error', () => expect().nothing());
-      instance.abort();
     })
 
     it('should ignore port if host provided on options', () => {
-      const instance = new FakeRequest(
+      instance = new FakeRequest(
         mockAjax,
         {
           protocol: 'http:',
@@ -93,14 +84,10 @@ describe('FakeRequest', () => {
       );
 
       expect(instance.url).toEqual('http://localhost:8080/path');
-
-      // Abort execution
-      instance.on('error', () => expect().nothing());
-      instance.abort();
     })
 
     it('should add protocol from agent if no provided', () => {
-      const instance = new FakeRequest(
+      instance = new FakeRequest(
         mockAjax,
         {
           agent: new FakeAgent({ protocol: 'https:' }),
@@ -111,14 +98,10 @@ describe('FakeRequest', () => {
       );
 
       expect(instance.url).toEqual('https://localhost:8080/path');
-
-      // Abort execution
-      instance.on('error', () => expect().nothing());
-      instance.abort();
     })
 
     it('should set method if in options', () => {
-      const instance = new FakeRequest(
+      instance = new FakeRequest(
         mockAjax,
         {
           method: 'POST',
@@ -126,40 +109,28 @@ describe('FakeRequest', () => {
       );
 
       expect(instance.method).toEqual('POST');
-
-      // Abort execution
-      instance.on('error', () => expect().nothing());
-      instance.abort();
     })
 
     it('should set default method if string', () => {
-      const instance = new FakeRequest(
+      instance = new FakeRequest(
         mockAjax,
         'http://localhost:8080/path'
       );
 
       expect(instance.method).toEqual('GET');
-
-      // Abort execution
-      instance.on('error', () => expect().nothing());
-      instance.abort();
     })
 
     it('should set default method if URL object', () => {
-      const instance = new FakeRequest(
+      instance = new FakeRequest(
         mockAjax,
         new URL('http://localhost:8080/path')
       );
 
       expect(instance.method).toEqual('GET');
-
-      // Abort execution
-      instance.on('error', () => expect().nothing());
-      instance.abort();
     })
 
     it('should set default method if no in options', () => {
-      const instance = new FakeRequest(
+      instance = new FakeRequest(
         mockAjax,
         {
           method: undefined,
@@ -167,28 +138,20 @@ describe('FakeRequest', () => {
       );
 
       expect(instance.method).toEqual('GET');
-
-      // Abort execution
-      instance.on('error', () => expect().nothing());
-      instance.abort();
     })
 
     it('should set default headers if no provided', () => {
-      const instance = new FakeRequest(
+      instance = new FakeRequest(
         mockAjax,
         {}
       );
 
       expect(instance.requestHeaders).toEqual({
       });
-
-      // Abort execution
-      instance.on('error', () => expect().nothing());
-      instance.abort();
     })
 
     it('should set provided headers', () => {
-      const instance = new FakeRequest(
+      instance = new FakeRequest(
         mockAjax,
         {
           headers: {
@@ -204,14 +167,10 @@ describe('FakeRequest', () => {
         'header2': 'two',
         'header3': 'tree,3.2',
       });
-
-      // Abort execution
-      instance.on('error', () => expect().nothing());
-      instance.abort();
     })
 
     it('should not override with default headers', () => {
-      const instance = new FakeRequest(
+      instance = new FakeRequest(
         mockAjax,
         {
           headers: {
@@ -223,14 +182,10 @@ describe('FakeRequest', () => {
       expect(instance.requestHeaders).toEqual({
         'host': 'http://example.com',
       });
-
-      // Abort execution
-      instance.on('error', () => expect().nothing());
-      instance.abort();
     })
 
     it('should set params with string body on write', () => {
-      const instance = new FakeRequest(
+      instance = new FakeRequest(
         mockAjax,
         {
           headers: {
@@ -240,16 +195,13 @@ describe('FakeRequest', () => {
       );
 
       instance.write('my string body');
-      
-      // Abort execution
-      instance.on('error', () => expect().nothing());
-      instance.abort();
+      instance.end();
 
       expect(instance.params).toEqual('my string body');
     })
 
     it('should set params with string Buffer body on write', () => {
-      const instance = new FakeRequest(
+      instance = new FakeRequest(
         mockAjax,
         {
           headers: {
@@ -259,16 +211,13 @@ describe('FakeRequest', () => {
       );
 
       instance.write(Buffer.from('my string body'));
-      
-      // Abort execution
-      instance.on('error', () => expect().nothing());
-      instance.abort();
+      instance.end();
 
       expect(instance.params).toEqual('my string body');
     })
 
     it('should set params with binary Buffer body on write', () => {
-      const instance = new FakeRequest(
+      instance = new FakeRequest(
         mockAjax,
         {
           headers: {
@@ -277,17 +226,14 @@ describe('FakeRequest', () => {
         }
       );
 
-      instance.write(Buffer.from([1234,546,456,45,234,6435]));
-      
-      // Abort execution
-      instance.on('error', () => expect().nothing());
-      instance.abort();
+      instance.write(Buffer.from([1234, 546, 456, 45, 234, 6435]));
+      instance.end();
 
-      expect(instance.params).toEqual(Buffer.from([1234,546,456,45,234,6435]).toString('hex'));
+      expect(instance.params).toEqual(Buffer.from([1234, 546, 456, 45, 234, 6435]).toString('hex'));
     })
 
     it('should set params with string body on end', () => {
-      const instance = new FakeRequest(
+      instance = new FakeRequest(
         mockAjax,
         {
           headers: {
@@ -409,7 +355,7 @@ describe('FakeRequest', () => {
         mockAjax,
         {}
       );
-      
+
       instance.on('response', res => {
         expect(res).toBeDefined();
 
@@ -430,7 +376,7 @@ describe('FakeRequest', () => {
         mockAjax,
         {}
       );
-      
+
       // Make the request to end
       instance.respondWith({
       });
@@ -438,10 +384,10 @@ describe('FakeRequest', () => {
       instance.on('response', res => {
         expect(res).toBeDefined();
 
-        const spyData = jasmine.createSpy();
+        const spyData = jest.fn();
 
         res.on('data', spyData);
-        
+
         res.on('end', () => {
           expect(spyData).not.toHaveBeenCalled();
 
@@ -451,8 +397,8 @@ describe('FakeRequest', () => {
     });
 
     it('should return status from stub', done => {
-      spyOn(mockAjax.stubs, 'findStub')
-        .and.returnValue(new MockRequestStub({
+      jest.spyOn(mockAjax.stubs, 'findStub')
+        .mockReturnValue(new MockRequestStub({
           status: 404,
         }));
 
@@ -470,8 +416,8 @@ describe('FakeRequest', () => {
     });
 
     it('should return headers from stub', done => {
-      spyOn(mockAjax.stubs, 'findStub')
-        .and.returnValue(new MockRequestStub({
+      jest.spyOn(mockAjax.stubs, 'findStub')
+        .mockReturnValue(new MockRequestStub({
           responseHeaders: {
             'header1': '1',
             'header2': 'two',
@@ -495,8 +441,8 @@ describe('FakeRequest', () => {
     });
 
     it('should return response body from stub', done => {
-      spyOn(mockAjax.stubs, 'findStub')
-        .and.returnValue(new MockRequestStub({
+      jest.spyOn(mockAjax.stubs, 'findStub')
+        .mockReturnValue(new MockRequestStub({
           responseText: 'the response'
         }));
 
@@ -518,8 +464,8 @@ describe('FakeRequest', () => {
     });
 
     it('should return response text body from stub', done => {
-      spyOn(mockAjax.stubs, 'findStub')
-        .and.returnValue(new MockRequestStub({
+      jest.spyOn(mockAjax.stubs, 'findStub')
+        .mockReturnValue(new MockRequestStub({
           responseText: 'the response'
         }));
 
@@ -527,7 +473,7 @@ describe('FakeRequest', () => {
         mockAjax,
         {}
       );
-      
+
       instance.on('response', res => {
         expect(res).toBeDefined();
 
@@ -541,8 +487,8 @@ describe('FakeRequest', () => {
     });
 
     it('should not return body when no stub body', done => {
-      spyOn(mockAjax.stubs, 'findStub')
-        .and.returnValue(new MockRequestStub({
+      jest.spyOn(mockAjax.stubs, 'findStub')
+        .mockReturnValue(new MockRequestStub({
         }));
 
       const instance = new FakeRequest(
@@ -553,10 +499,10 @@ describe('FakeRequest', () => {
       instance.on('response', res => {
         expect(res).toBeDefined();
 
-        const spyData = jasmine.createSpy();
+        const spyData = jest.fn();
 
         res.on('data', spyData);
-        
+
         res.on('end', () => {
           expect(spyData).not.toHaveBeenCalled();
 
@@ -568,7 +514,7 @@ describe('FakeRequest', () => {
     });
 
     it('should not send response again if already ended', () => {
-      jasmine.clock().install();
+      jest.useFakeTimers();
 
       const instance = new FakeRequest(
         mockAjax,
@@ -581,19 +527,19 @@ describe('FakeRequest', () => {
         })
         // Make the request to end
         .respondWith({});
-        
-      jasmine.clock().tick(2);
-        
-      const spy = jasmine.createSpy();
+
+      jest.advanceTimersByTime(2);
+
+      const spy = jest.fn();
       instance
         .once('response', spy)
         .respondWith({}); // Make the request to end
-        
-      jasmine.clock().tick(2);
+
+      jest.advanceTimersByTime(2);
 
       expect(spy).not.toHaveBeenCalled();
 
-      jasmine.clock().uninstall();
+      jest.useRealTimers();
     });
 
     it('should end request when flushed', () => {
@@ -602,7 +548,7 @@ describe('FakeRequest', () => {
         {}
       );
 
-      spyOn(instance, 'end');
+      jest.spyOn(instance, 'end').mockImplementation(() => null);
 
       instance.flushHeaders();
 

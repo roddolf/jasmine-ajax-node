@@ -6,7 +6,7 @@ import { MockAjax } from './MockAjax';
 describe('MockAjax', () => {
 
   it('should not throw error if uninstalled between installs', () => {
-    const requestFn = jasmine.createSpy();
+    const requestFn = jest.fn();
     const module = { request: requestFn };
     const mockAjax = new MockAjax({ 'http': module });
 
@@ -18,7 +18,7 @@ describe('MockAjax', () => {
   })
 
   it('should throw error if installed without uninstalling', () => {
-    const requestFn = jasmine.createSpy();
+    const requestFn = jest.fn();
     const module = { request: requestFn };
     const mockAjax = new MockAjax({ 'http': module });
 
@@ -29,7 +29,7 @@ describe('MockAjax', () => {
   })
 
   it('should throw error if uninstalled without a current install', () => {
-    const requestFn = jasmine.createSpy();
+    const requestFn = jest.fn();
     const module = { request: requestFn };
     const mockAjax = new MockAjax({ 'http': module });
 
@@ -39,13 +39,13 @@ describe('MockAjax', () => {
   })
 
   it('should not replace request fn until it is installed', () => {
-    const requestFn = jasmine.createSpy();
+    const requestFn = jest.fn();
     const module = { request: requestFn };
     const mockAjax = new MockAjax({ 'http': module });
 
     module.request('foo');
     expect(requestFn).toHaveBeenCalledWith('foo');
-    requestFn.calls.reset();
+    requestFn.mockClear();
 
     mockAjax.install();
     module.request('foo');
@@ -53,7 +53,7 @@ describe('MockAjax', () => {
   })
 
   it('should restore request fn on uninstall', () => {
-    const requestFn = jasmine.createSpy();
+    const requestFn = jest.fn();
     const module = { request: requestFn };
     const mockAjax = new MockAjax({ 'http': module });
 
@@ -65,7 +65,7 @@ describe('MockAjax', () => {
   })
 
   it('should clear requests and stubs upon uninstall', () => {
-    const requestFn = jasmine.createSpy();
+    const requestFn = jest.fn();
     const module = { request: requestFn };
     const mockAjax = new MockAjax({ 'http': module });
 
@@ -84,7 +84,7 @@ describe('MockAjax', () => {
   })
 
   it('should allow the request to be retrieved', () => {
-    const requestFn = jasmine.createSpy();
+    const requestFn = jest.fn();
     const module = { request: requestFn };
     const mockAjax = new MockAjax({ 'http': module });
 
@@ -96,7 +96,7 @@ describe('MockAjax', () => {
   })
 
   it('should allow the requests to be cleared', () => {
-    const requestFn = jasmine.createSpy();
+    const requestFn = jest.fn();
     const module = { request: requestFn };
     const mockAjax = new MockAjax({ 'http': module });
 
@@ -109,47 +109,47 @@ describe('MockAjax', () => {
   })
 
   it('should pass options on request', () => {
-    const requestFn = jasmine.createSpy();
+    const requestFn = jest.fn();
     const module = { request: requestFn };
     const mockAjax = new MockAjax({ 'http': module });
 
     mockAjax.install();
     module.request({ host: 'http://example.com' });
     expect(mockAjax.requests.mostRecent())
-      .toEqual(jasmine.objectContaining({ url: 'http://example.com' }));
+      .toEqual(expect.objectContaining({ url: 'http://example.com' }));
   })
 
   it('should pass string URL & options on request', () => {
-    const requestFn = jasmine.createSpy();
+    const requestFn = jest.fn();
     const module = { request: requestFn };
     const mockAjax = new MockAjax({ 'http': module });
 
     mockAjax.install();
     module.request('http://example.com/', {});
     expect(mockAjax.requests.mostRecent())
-      .toEqual(jasmine.objectContaining({ url: 'http://example.com/' }));
+      .toEqual(expect.objectContaining({ url: 'http://example.com/' }));
   })
 
   it('should pass URL object & options on request', () => {
-    const requestFn = jasmine.createSpy();
+    const requestFn = jest.fn();
     const module = { request: requestFn };
     const mockAjax = new MockAjax({ 'http': module });
 
     mockAjax.install();
     module.request(parse('http://example.com/'), {});
     expect(mockAjax.requests.mostRecent())
-      .toEqual(jasmine.objectContaining({ url: 'http://example.com/' }));
+      .toEqual(expect.objectContaining({ url: 'http://example.com/' }));
   })
 
   it('should pass callback', () => {
-    const requestFn = jasmine.createSpy();
+    const requestFn = jest.fn();
     const module = { request: requestFn };
     const mockAjax = new MockAjax({ 'http': module });
 
     mockAjax.install();
-    module.request(parse('http://example.com/'), jasmine.createSpy());
+    module.request(parse('http://example.com/'), jest.fn());
     expect(mockAjax.requests.mostRecent())
-      .toEqual(jasmine.objectContaining({ url: 'http://example.com/' }));
+      .toEqual(expect.objectContaining({ url: 'http://example.com/' }));
   })
 
 })

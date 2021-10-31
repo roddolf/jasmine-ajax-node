@@ -50,7 +50,7 @@ export class FakeRequest extends http.ClientRequest {
     this.ajax = ajax;
     this.callback = callback;
 
-    this.aborted = 0;
+    this.aborted = false;
     // this.socket = this.connection = new FakeSocket() as any;
     this.res = new http.IncomingMessage(this.socket);
 
@@ -121,7 +121,7 @@ export class FakeRequest extends http.ClientRequest {
   abort(): void {
     if (this.aborted) return;
 
-    this.aborted = 1;
+    this.aborted = true;
     if (!this.ended) this._endFake();
 
     const error: NodeJS.ErrnoException = new Error();
