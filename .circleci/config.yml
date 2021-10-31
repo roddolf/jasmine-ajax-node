@@ -57,7 +57,15 @@ jobs:
       - attach_workspace:
           at: ~/
 
-      - run: npm run test:coverage
+      - run:
+          command: npm run test:ci
+          environment:
+            JEST_JUNIT_OUTPUT_DIR: ./reports/junit/
+
+      - store_test_results:
+          path: ./reports/junit/
+      - store_artifacts:
+          path: ./reports/junit
 
       # Persist coverage reports into the workspace
       - persist_to_workspace:
