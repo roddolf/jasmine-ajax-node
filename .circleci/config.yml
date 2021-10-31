@@ -1,0 +1,163 @@
+common: &common
+  docker:
+    - image: circleci/node:12
+  working_directory: ~/workspace
+
+add_npm_token: &add_npm_token echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+
+version: 2
+jobs:
+  checkout:
+    <<: *common
+
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+
+      - run: npm install
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+
+      # Persist the specified paths into the workspace.
+      - persist_to_workspace:
+          root: ~/
+          # Must be relative path from root
+          paths:
+            - workspace
+
+  build:
+    <<: *common
+
+    steps:
+      - attach_workspace:
+          at: ~/
+
+      - run: npm start
+
+      # Persist the specified paths into the workspace.
+      - persist_to_workspace:
+          root: ~/
+          # Must be relative path from root
+          paths:
+            - workspace
+
+  test:
+    <<: *common
+
+    steps:
+      - attach_workspace:
+          at: ~/
+
+      - run: npm run test:coverage
+
+  lint:
+    <<: *common
+
+    steps:
+      - attach_workspace:
+          at: ~/
+
+      - run: npm run lint
+
+  sendCoverage:
+    <<: *common
+
+    steps:
+      - attach_workspace:
+          at: ~/
+
+      - run: npm run test:sendCoverage
+
+  publish:
+    <<: *common
+
+    steps:
+      - attach_workspace:
+          at: ~/
+
+      - run: *add_npm_token
+
+      - run: npm publish
+
+  publish-next:
+    <<: *common
+
+    steps:
+      - attach_workspace:
+          at: ~/
+
+      - run: *add_npm_token
+
+      - run: npm publish --tag next
+
+workflows:
+  version: 2
+  build_and_publish:
+    jobs:
+      - checkout:
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              only: /.*/
+      - build:
+          requires:
+            - checkout
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              only: /.*/
+      - test:
+          requires:
+            - checkout
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              only: /.*/
+      - lint:
+          requires:
+            - checkout
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              only: /.*/
+      - sendCoverage:
+          requires:
+            - test
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              only: /.*/
+      - publish:
+          requires:
+            - build
+            - test
+            - lint
+          filters:
+            tags:
+              only: /^v\d+\.\d+\.\d+$/
+            branches:
+              ignore: /.*/
+      - publish-next:
+          requires:
+            - build
+            - test
+            - lint
+          filters:
+            tags:
+              only: /^v.*[a-zA-Z]+\.\d+$/
+            branches:
+              ignore: /.*/
