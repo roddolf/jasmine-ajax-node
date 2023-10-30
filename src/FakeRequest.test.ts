@@ -262,7 +262,6 @@ describe('FakeRequest', () => {
         {},
         callback
       );
-      instance.end();
 
       // Make the request to end
       instance.respondWith({});
@@ -279,7 +278,6 @@ describe('FakeRequest', () => {
         {},
         callback
       );
-      instance.end();
 
       // Make the request to end
       instance.respondWith({});
@@ -290,7 +288,6 @@ describe('FakeRequest', () => {
         mockAjax,
         {}
       );
-      instance.end();
 
       // Make the request to end
       instance.respondWith({
@@ -309,7 +306,6 @@ describe('FakeRequest', () => {
         mockAjax,
         {}
       );
-      instance.end();
 
       // Make the request to end
       instance.respondWith({
@@ -570,6 +566,21 @@ describe('FakeRequest', () => {
       });
     });
 
+    it('should mock connection once socket event', done => {
+      const instance = new FakeRequest(
+        mockAjax,
+        {}
+      );
+
+      instance.once('socket', socket => {
+        socket.once('connect', () => {
+          expect(socket).toBeDefined();
+
+          done();
+        });
+      });
+    });
+
   })
 
   describe('Status validations', () => {
@@ -592,6 +603,22 @@ describe('FakeRequest', () => {
 
       });
       instance.abort();
+    });
+
+    it('should not emit end when already ended', done => {
+      const instance = new FakeRequest(
+        mockAjax,
+        {}
+      );
+
+      instance.once('end', () => {
+        const emitSpy = jest.spyOn(instance, 'emit');
+        instance.end();
+
+        expect(emitSpy).not.toHaveBeenCalledWith('end');
+        done();
+      });
+      instance.end();
     });
 
     it('should throw error if unsupported chunk', () => {

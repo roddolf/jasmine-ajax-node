@@ -186,10 +186,6 @@ export class FakeRequest extends ClientRequest {
   }
 
   private _processSocketListener(listener: (socket: Socket) => void): this {
-    if (!this.socket) {
-      this.socket = new Socket();
-    }
-
     listener.call(this, this.socket);
     this.socket.emit('connect', this.socket);
     this.socket.emit('secureConnect', this.socket);
@@ -202,6 +198,8 @@ export class FakeRequest extends ClientRequest {
 
     const stub: RequestStub | undefined = this.ajax.stubs.findStub(this.url, this.params, this.method);
     if (stub) this.respondWith(stub);
+
+    this.ended = true;
   }
 
   private _endFake(): void {
