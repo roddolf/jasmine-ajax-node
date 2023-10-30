@@ -548,7 +548,7 @@ describe('FakeRequest', () => {
         {}
       );
 
-      jest.spyOn(instance, 'end').mockImplementation(() => null);
+      jest.spyOn(instance, 'end').mockReturnThis();
 
       instance.flushHeaders();
 
