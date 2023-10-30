@@ -1,6 +1,6 @@
-import { Agent, AgentOptions, IncomingMessage } from 'node:http';
-import { Socket } from 'node:net';
-import { EventEmitter } from 'node:stream';
+import { Agent, AgentOptions, IncomingMessage } from 'http';
+import { Socket } from 'net';
+import { EventEmitter } from 'stream';
 
 /**
  * Extended options for a fake agent.

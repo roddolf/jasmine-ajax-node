@@ -1,7 +1,7 @@
-import { ClientRequest, ClientRequestArgs, IncomingMessage } from 'node:http';
-import { Socket } from 'node:net';
-import { setImmediate } from 'node:timers';
-import { URL, parse } from 'node:url';
+import { ClientRequest, ClientRequestArgs, IncomingMessage } from 'http';
+import { Socket } from 'net';
+import { setImmediate } from 'timers';
+import { URL, parse } from 'url';
 import { FakeAgent } from './FakeAgent';
 import type { MockAjax } from './MockAjax';
 import { RequestStub } from './RequestStub';
