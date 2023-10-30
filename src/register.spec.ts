@@ -1,3 +1,4 @@
+import { beforeAll, describe, expect, it } from '@jest/globals';
 import { MockAjax } from "./MockAjax";
 
 describe("register", () => {

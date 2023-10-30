@@ -1,4 +1,5 @@
-import { RequestStub } from "./RequestStub"
+import { describe, expect, it } from '@jest/globals';
+import { RequestStub } from "./RequestStub";
 
 
 describe('RequestStub', () => {
@@ -7,16 +8,16 @@ describe('RequestStub', () => {
 
     it('should set method', () => {
       const instance = new RequestStub('http://example.com', 'the data', 'POST');
-  
+
       expect(instance.method).toEqual('POST');
     })
-  
+
     it('should set data', () => {
       const instance = new RequestStub('http://example.com', 'the data', 'POST');
-  
+
       expect(instance.data).toEqual('the data');
     })
-    
+
   })
 
   describe('andReturn', () => {
