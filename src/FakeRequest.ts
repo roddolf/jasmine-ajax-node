@@ -136,15 +136,17 @@ export class FakeRequest extends http.ClientRequest {
     this._emitError(connResetError);
   }
 
-  end(chunk?: unknown, encoding?: unknown): void {
+  end(chunk?: unknown, encoding?: unknown): this {
     if (this.aborted) this._emitError(new Error('Request aborted'));
-    if (this.ended) return;
+    if (this.ended) return this;
 
     if(chunk) this.write(chunk, encoding);
     this._endFake();
 
     this.emit('finish');
     this.emit('end');
+
+    return this;
   }
 
   write(chunk: unknown, encoding: unknown = 'utf8'): boolean {
