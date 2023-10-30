@@ -1,5 +1,4 @@
-import { IncomingMessage } from 'node:http';
-import { Agent, AgentOptions } from 'node:https';
+import { Agent, AgentOptions, IncomingMessage } from 'node:http';
 import { Socket } from 'node:net';
 import { EventEmitter } from 'node:stream';
 

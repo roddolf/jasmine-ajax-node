@@ -1,20 +1,20 @@
-import http from 'http';
-import net from 'net';
-import stream from "stream";
-import timers from 'timers';
-import { parse, URL, UrlWithStringQuery } from 'url';
+import { ClientRequest, ClientRequestArgs, IncomingMessage } from 'node:http';
+import { Socket } from 'node:net';
+import { setImmediate } from 'node:timers';
+import { URL, parse } from 'node:url';
 import { FakeAgent } from './FakeAgent';
 import type { MockAjax } from './MockAjax';
 import { RequestStub } from './RequestStub';
 import { Response } from './Response';
 
 /**
- * Fake {@link http#ClientRequest} to be used instead a request call.
+ * Fake {@link ClientRequest} to be used instead a request call.
  *
  * @public
  */
-export class FakeRequest extends http.ClientRequest {
+export class FakeRequest extends ClientRequest {
   url: string;
+  socket: Socket;
   // Set by parent class
   method!: string;
   params: string | undefined;
@@ -23,36 +23,35 @@ export class FakeRequest extends http.ClientRequest {
   };
 
   private ajax: MockAjax;
-  private res: http.IncomingMessage;
-  private callback: ((res: http.IncomingMessage) => void) | undefined;
+  private res: IncomingMessage;
+  private callback: ((res: IncomingMessage) => void) | undefined;
   private ended: boolean | undefined;
   private requestBodyBuffers: Buffer[];
   private responseBodyBuffers: (Buffer | string)[];
 
   constructor(
     ajax: MockAjax,
-    optionsOrURL: http.ClientRequestArgs | string | URL,
-    callback?: (res: http.IncomingMessage) => void,
+    optionsOrURL: ClientRequestArgs | string | URL,
+    callback?: (res: IncomingMessage) => void,
   ) {
-    const options: http.ClientRequestArgs = typeof optionsOrURL === 'object'
+    const options: ClientRequestArgs = typeof optionsOrURL === 'object'
       ? optionsOrURL
-      : parse(optionsOrURL);
+      : new URL(optionsOrURL, 'http://localhost');
 
-    if (!options.protocol && 'agent' in options && FakeAgent.is(options.agent)) {
+
+    if (!options.protocol && FakeAgent.is(options.agent)) {
       options.protocol = options.agent.protocol;
     }
+    options.agent = new FakeAgent({ protocol: options.protocol });
 
-    super({
-      ...options,
-      agent: new FakeAgent({ protocol: options.protocol }),
-    });
+    super(options);
 
     this.ajax = ajax;
     this.callback = callback;
 
     this.aborted = false;
-    // this.socket = this.connection = new FakeSocket() as any;
-    this.res = new http.IncomingMessage(this.socket);
+    this.socket = new Socket();
+    this.res = new IncomingMessage(this.socket);
 
     this.requestBodyBuffers = [];
     this.responseBodyBuffers = [];
@@ -65,14 +64,14 @@ export class FakeRequest extends http.ClientRequest {
   }
 
 
-  private static createURL(options: http.ClientRequestArgs | URL |UrlWithStringQuery): string {
+  private static createURL(options: ClientRequestArgs | URL): string {
     let url = '';
 
     if (options.protocol) { url += `${options.protocol}//`; }
 
     if (options.host) { url += options.host; }
     else if (options.hostname) {
-      url += options.hostname; 
+      url += options.hostname;
       if (options.port) { url += ':' + options.port; }
     }
 
@@ -140,7 +139,7 @@ export class FakeRequest extends http.ClientRequest {
     if (this.aborted) this._emitError(new Error('Request aborted'));
     if (this.ended) return this;
 
-    if(chunk) this.write(chunk, encoding);
+    if (chunk) this.write(chunk, encoding);
     this._endFake();
 
     this.emit('finish');
@@ -163,26 +162,11 @@ export class FakeRequest extends http.ClientRequest {
 
     if (this.aborted) this._emitError(new Error('Request aborted'));
 
-    timers.setImmediate(() => this.emit('drain'));
+    setImmediate(() => this.emit('drain'));
 
     return false;
   }
 
-  once(event: 'abort', listener: () => void): this;
-  once(event: 'connect', listener: (response: http.IncomingMessage, socket: net.Socket, head: Buffer) => void): this;
-  once(event: 'continue', listener: () => void): this;
-  once(event: 'information', listener: (info: http.InformationEvent) => void): this;
-  once(event: 'response', listener: (response: http.IncomingMessage) => void): this;
-  once(event: 'socket', listener: (socket: net.Socket) => void): this;
-  once(event: 'timeout', listener: () => void): this;
-  once(event: 'upgrade', listener: (response: http.IncomingMessage, socket: net.Socket, head: Buffer) => void): this;
-  once(event: 'close', listener: () => void): this;
-  once(event: 'drain', listener: () => void): this;
-  once(event: 'error', listener: (err: Error) => void): this;
-  once(event: 'finish', listener: () => void): this;
-  once(event: 'pipe', listener: (src: stream.Readable) => void): this;
-  once(event: 'unpipe', listener: (src: stream.Readable) => void): this;
-  once(event: string | symbol, listener: (...args: unknown[]) => void): this;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   once(event: string, listener: (...args: any[]) => void): this {
     if (event === 'socket') {
@@ -192,21 +176,6 @@ export class FakeRequest extends http.ClientRequest {
     return super.once(event, listener);
   }
 
-  on(event: 'abort', listener: () => void): this;
-  on(event: 'connect', listener: (response: http.IncomingMessage, socket: net.Socket, head: Buffer) => void): this;
-  on(event: 'continue', listener: () => void): this;
-  on(event: 'information', listener: (info: http.InformationEvent) => void): this;
-  on(event: 'response', listener: (response: http.IncomingMessage) => void): this;
-  on(event: 'socket', listener: (socket: net.Socket) => void): this;
-  on(event: 'timeout', listener: () => void): this;
-  on(event: 'upgrade', listener: (response: http.IncomingMessage, socket: net.Socket, head: Buffer) => void): this;
-  on(event: 'close', listener: () => void): this;
-  on(event: 'drain', listener: () => void): this;
-  on(event: 'error', listener: (err: Error) => void): this;
-  on(event: 'finish', listener: () => void): this;
-  on(event: 'pipe', listener: (src: stream.Readable) => void): this;
-  on(event: 'unpipe', listener: (src: stream.Readable) => void): this;
-  on(event: string | symbol, listener: (...args: unknown[]) => void): this;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   on(event: string, listener: (...args: any[]) => void): this {
     if (event === 'socket') {
@@ -216,9 +185,9 @@ export class FakeRequest extends http.ClientRequest {
     return super.on(event, listener);
   }
 
-  private _processSocketListener(listener: (socket: net.Socket) => void): this {
+  private _processSocketListener(listener: (socket: Socket) => void): this {
     if (!this.socket) {
-      this.socket = new net.Socket();
+      this.socket = new Socket();
     }
 
     listener.call(this, this.socket);
@@ -271,10 +240,10 @@ export class FakeRequest extends http.ClientRequest {
         }
 
         this.res.push(chunk);
-        timers.setImmediate(emitChunk);
+        setImmediate(emitChunk);
       };
 
-      timers.setImmediate(emitChunk);
+      setImmediate(emitChunk);
     });
   }
 
@@ -288,7 +257,7 @@ function isBinaryBuffer(buffer: Buffer) {
   const utfEncodedBuffer = buffer.toString('utf8');
   const reconstructedBuffer = Buffer.from(utfEncodedBuffer, 'utf8');
 
-  //  If the buffers are *not* equal then this is a "binary buffer"
+  //  If the buffers are *not* equal then this is a 'binary buffer'
   //  meaning that it cannot be faithfully represented in utf8.
   return !buffer.equals(reconstructedBuffer);
 }
