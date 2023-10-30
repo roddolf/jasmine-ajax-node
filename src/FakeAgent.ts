@@ -1,12 +1,14 @@
-import http from 'http';
-import { Socket } from 'net';
+import { IncomingMessage } from 'node:http';
+import { Agent, AgentOptions } from 'node:https';
+import { Socket } from 'node:net';
+import { EventEmitter } from 'node:stream';
 
 /**
  * Extended options for a fake agent.
  *
  * @public
  */
-export interface FakeAgentOptions extends http.AgentOptions {
+export interface FakeAgentOptions extends AgentOptions {
   protocol?: string | null;
 }
 
@@ -16,12 +18,13 @@ export interface FakeAgentOptions extends http.AgentOptions {
  *
  * @public
  */
-export class FakeAgent implements http.Agent {
-  options: http.AgentOptions;
+export class FakeAgent extends EventEmitter implements Agent {
+  options: AgentOptions;
   protocol: string | undefined | null;
 
-  sockets: { readonly [key: string]: Socket[]; };
-  requests: { readonly [key: string]: http.IncomingMessage[]; };
+  sockets: NodeJS.ReadOnlyDict<Socket[]>;
+  freeSockets: NodeJS.ReadOnlyDict<Socket[]>;
+  requests: NodeJS.ReadOnlyDict<IncomingMessage[]>;
   maxSockets: number;
   maxFreeSockets: number;
   maxTotalSockets: number;
@@ -33,10 +36,13 @@ export class FakeAgent implements http.Agent {
   }
 
   constructor(options: FakeAgentOptions = {}) {
+    super();
+
     this.protocol = options.protocol;
     this.options = options;
 
     this.sockets = {};
+    this.freeSockets = {};
     this.requests = {};
     this.maxSockets = Infinity;
     this.maxFreeSockets = Infinity;
