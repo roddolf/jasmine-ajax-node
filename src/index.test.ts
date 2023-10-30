@@ -1,3 +1,4 @@
+import { describe, expect, it, jest } from '@jest/globals';
 import * as Module from './index';
 
 // Mock register to not run execution

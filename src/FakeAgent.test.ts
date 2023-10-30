@@ -1,3 +1,4 @@
+import { describe, expect, it } from '@jest/globals';
 import { IncomingMessage } from 'http';
 import { Socket } from 'net';
 import { FakeAgent } from './FakeAgent';
