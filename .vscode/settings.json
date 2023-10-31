@@ -5,5 +5,8 @@
         "Codacy",
         "codecov",
         "npmjs"
-    ]
+    ],
+    "jest.shell": "pwsh",
+    "jest.autoRun": "off",
+    "jest.jestCommandLine": "npm run test ---",
 }
