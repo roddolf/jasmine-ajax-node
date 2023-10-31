@@ -8,5 +8,5 @@
     ],
     "jest.shell": "pwsh",
     "jest.autoRun": "off",
-    "jest.jestCommandLine": "npm run test ---",
+    "jest.jestCommandLine": "npm run test ---"
 }
