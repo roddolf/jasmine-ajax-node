@@ -3,3 +3,6 @@ engines:
   duplication:
     exclude_paths:
       - "**/*.test.ts"
+  remark-lint:
+    exclude_paths:
+      - "./CHANGELOG.md"
