@@ -1,6 +1,6 @@
 {
   "name": "jasmine-ajax-node",
-  "version": "1.1.1",
+  "version": "2.0.0",
   "description": "Request mocking for Node.js using the same API as jasmine-ajax.",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -62,7 +62,7 @@
   "peerDependencies": {
     "jasmine": ">=2"
   },
-  "engines" : { 
-    "node" : ">=20.0.0"
+  "engines": {
+    "node": ">=20.0.0"
   }
 }
