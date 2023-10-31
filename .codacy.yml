@@ -5,4 +5,4 @@ engines:
       - "**/*.test.ts"
   remark-lint:
     exclude_paths:
-      - "./CHANGELOG.md"
+      - "**/CHANGELOG.md"
