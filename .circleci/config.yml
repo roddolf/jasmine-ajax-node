@@ -5,7 +5,9 @@ common: &common
 
 add_npm_token: &add_npm_token echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
 
-version: 2
+version: '2.1'
+orbs:
+  codecov: codecov/codecov@5.4
 jobs:
   checkout:
     <<: *common
@@ -90,7 +92,7 @@ jobs:
       - attach_workspace:
           at: ~/
 
-      - run: npm run test:sendCoverage
+      - run: codecov/upload
 
   publish:
     <<: *common
