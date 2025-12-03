@@ -6,5 +6,5 @@
 [![CircleCI](https://circleci.com/gh/roddolf/jasmine-ajax-node/tree/main.svg?style=svg)](https://circleci.com/gh/roddolf/jasmine-ajax-node/tree/main)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
 
-Requests mocking for Node.js using the same API as [jasmine-ajax](https://github.com/jasmine/jasmine-ajax),
-making able to run tests using `jasmine.Ajax` in Node.js.
+Requests mocking for Node.js native http/https modules, this uses the same API as [jasmine-ajax](https://github.com/jasmine/jasmine-ajax)
+allowing to run tests using `jasmine.Ajax` in Node.js.
