@@ -92,7 +92,7 @@ jobs:
       - attach_workspace:
           at: ~/
 
-      - run: codecov/upload
+      - codecov/upload
 
   publish:
     <<: *common
