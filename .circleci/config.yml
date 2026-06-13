@@ -7,7 +7,7 @@ add_npm_token: &add_npm_token echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN"
 
 version: '2.1'
 orbs:
-  codecov: codecov/codecov@5.4
+  codecov: codecov/codecov@6.0.0
 jobs:
   checkout:
     <<: *common
